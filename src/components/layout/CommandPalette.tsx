@@ -23,7 +23,7 @@ export default function CommandPalette({ open, onClose }: Props) {
   // Quick navigation destinations
   const QUICK_TOOLS = [
     { title: 'AI College Finder', desc: 'Natural language search with preference extraction', href: '/ai-college-finder', icon: Sparkles, color: 'text-violet-600 bg-violet-50' },
-    { title: 'Compare Colleges', desc: 'Side-by-side comparison matrix with AI Assistant', href: '/compare', icon: GitCompare, color: 'text-blue-600 bg-blue-50' },
+    { title: 'Compare Colleges', desc: 'Side-by-side comparison matrix with AI Assistant', href: '/compare', icon: GitCompare, color: 'text-accent bg-blue-50' },
     { title: 'ROI Calculator', desc: 'Compute salary-to-fees payback period', href: '/roi-calculator', icon: Calculator, color: 'text-emerald-600 bg-emerald-50' },
     { title: 'Admission Probability', desc: 'Predict entrance cutoffs & admission chances', href: '/admission-probability', icon: Compass, color: 'text-amber-600 bg-amber-50' },
     { title: 'Entrance Exams Calendar', desc: 'JEE Main, Advanced, MHT-CET, BITSAT dates & patterns', href: '/exams', icon: BookOpen, color: 'text-rose-600 bg-rose-50' },
@@ -31,7 +31,7 @@ export default function CommandPalette({ open, onClose }: Props) {
     { title: 'Academic Programs & Degrees', desc: 'Directory of B.Tech, MBA, M.Tech courses', href: '/courses', icon: BookOpen, color: 'text-indigo-600 bg-indigo-50' },
     { title: 'Verified Student Reviews', desc: 'AI Review Intelligence & student feedback', href: '/reviews', icon: Star, color: 'text-yellow-600 bg-yellow-50' },
     { title: 'College Rankings 2026', desc: 'NIRF, Reality Score, and Placement ranks', href: '/rankings', icon: BarChart2, color: 'text-rose-600 bg-rose-50' },
-    { title: 'Student Dashboard', desc: 'Personalized student recommendations & progress', href: '/student/dashboard', icon: GraduationCap, color: 'text-blue-600 bg-blue-50' },
+    { title: 'Student Dashboard', desc: 'Personalized student recommendations & progress', href: '/student/dashboard', icon: GraduationCap, color: 'text-accent bg-blue-50' },
     { title: 'College Admin Portal', desc: 'Manage institutional profile, analytics & leads', href: '/college/dashboard', icon: ExternalLink, color: 'text-emerald-600 bg-emerald-50' },
     { title: 'Super Admin Portal', desc: 'Platform verification queue, moderation & ranking weights', href: '/admin/dashboard', icon: ExternalLink, color: 'text-violet-600 bg-violet-50' },
   ];
@@ -117,7 +117,7 @@ export default function CommandPalette({ open, onClose }: Props) {
           >
             {/* Search Input Bar */}
             <div className="flex items-center px-4 py-3.5 border-b border-slate-100 gap-3">
-              <Search size={18} className="text-[#1a56db] shrink-0" />
+              <Search size={18} className="text-accent shrink-0" />
               <input
                 type="text"
                 autoFocus
@@ -155,7 +155,7 @@ export default function CommandPalette({ open, onClose }: Props) {
                       onMouseEnter={() => setSelectedIndex(idx)}
                       className={`w-full text-left p-3 rounded-xl flex items-center justify-between gap-3 transition-colors ${
                         isSelected
-                          ? 'bg-blue-50/80 text-[#1a56db]'
+                          ? 'bg-blue-50/80 text-accent'
                           : 'hover:bg-slate-50 text-slate-700'
                       }`}
                     >
@@ -181,7 +181,7 @@ export default function CommandPalette({ open, onClose }: Props) {
                         </span>
                       )}
 
-                      <ArrowRight size={14} className={`shrink-0 ${isSelected ? 'text-[#1a56db]' : 'text-slate-300'}`} />
+                      <ArrowRight size={14} className={`shrink-0 ${isSelected ? 'text-accent' : 'text-slate-300'}`} />
                     </button>
                   );
                 })

@@ -2,312 +2,196 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Calendar, Clock, CheckCircle2, AlertTriangle, Bell, ArrowRight,
-  TrendingUp, FileCheck, Shield, ChevronRight, HelpCircle, Building2,
-  ExternalLink, Sparkles, Filter, Check
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, ArrowUpRight, Bell, BellRing } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { ADMISSION_UPDATES } from '@/lib/mockData';
+import PageHeader from '@/components/layout/PageHeader';
+import AdmissionsTimeline from '@/components/admissions/AdmissionsTimeline';
+import DocumentChecklist from '@/components/admissions/DocumentChecklist';
+import Reveal from '@/components/motion/Reveal';
 import { useToast } from '@/components/ui/Toast';
+import {
+  ADMISSION_STEPS,
+  getNextRound,
+  getRoundStatus,
+  sortedSchedule,
+  type CounsellingSystem,
+} from '@/lib/admissionsData';
+import { cn } from '@/lib/utils';
 
-interface CounsellingRound {
-  id: string;
-  system: 'JoSAA / CSAB' | 'MHT-CET CAP' | 'NEET MCC' | 'Direct Institutional';
-  roundName: string;
-  dates: string;
-  status: 'active' | 'upcoming' | 'completed';
-  urgencyDays: number;
-  description: string;
-  actionUrl: string;
-}
-
-const COUNSELLING_SCHEDULE: CounsellingRound[] = [
-  {
-    id: 'c1',
-    system: 'JoSAA / CSAB',
-    roundName: 'JoSAA Round 5 Seat Allotment & Fee Submission',
-    dates: 'Oct 12 – Oct 16, 2026',
-    status: 'active',
-    urgencyDays: 3,
-    description: 'Mandatory online reporting, seat acceptance fee payment, and document upload for candidates allocated seats across 23 IITs and 31 NITs.',
-    actionUrl: 'https://josaa.nic.in',
-  },
-  {
-    id: 'c2',
-    system: 'MHT-CET CAP',
-    roundName: 'MHT-CET CAP Round 3 Choice Filling & Verification',
-    dates: 'Oct 18 – Oct 22, 2026',
-    status: 'upcoming',
-    urgencyDays: 7,
-    description: 'Final centralized admission round for autonomous and affiliated engineering colleges across Maharashtra state. Freeze or Float choice submission.',
-    actionUrl: 'https://cetcell.mahacet.org',
-  },
-  {
-    id: 'c3',
-    system: 'JoSAA / CSAB',
-    roundName: 'CSAB Special Round 1 Registration Opens',
-    dates: 'Oct 25 – Oct 28, 2026',
-    status: 'upcoming',
-    urgencyDays: 14,
-    description: 'Special counseling rounds for vacant seats in NITs, IIITs, and other GFTIs after completion of JoSAA rounds.',
-    actionUrl: 'https://csab.nic.in',
-  },
-  {
-    id: 'c4',
-    system: 'Direct Institutional',
-    roundName: 'BITS Pilani Iteration IV Seat Confirmation',
-    dates: 'Oct 20 – Oct 23, 2026',
-    status: 'upcoming',
-    urgencyDays: 9,
-    description: 'Payment of balance fees and campus reporting for candidates selected across Pilani, Goa, and Hyderabad campuses.',
-    actionUrl: 'https://bitsadmission.com',
-  },
-];
-
-const REQUIRED_DOCUMENTS = [
-  { title: 'Class 10th & 12th Marks Sheets', desc: 'Original + 3 attested photocopies showing minimum qualifying marks in PCM/PCB.', essential: true },
-  { title: 'Valid Entrance Scorecard & Admit Card', desc: 'Official NTA / State CET score printout with verified percentile breakdown.', essential: true },
-  { title: 'Domicile / Nationality Certificate', desc: 'Mandatory for State Quota seats (e.g. 85% Maharashtra State Quota).', essential: true },
-  { title: 'Category / Caste Certificate & Validity', desc: 'Required for OBC-NCL, SC, ST, EWS candidates with non-creamy layer certificate valid for 2026-27.', essential: true },
-  { title: 'Migration & School Leaving Certificate', desc: 'Issued by junior college / high school showing conduct and completion.', essential: false },
-  { title: 'Medical Fitness Certificate', desc: 'Signed by registered medical practitioner (MBBS) as per standard format.', essential: false },
-];
+const FILTERS: ('ALL' | CounsellingSystem)[] = ['ALL', 'JoSAA / CSAB', 'MHT-CET CAP', 'Direct Institutional'];
 
 export default function AdmissionsPage() {
   const { showToast } = useToast();
-  const [selectedFilter, setSelectedFilter] = useState<'ALL' | 'JoSAA / CSAB' | 'MHT-CET CAP' | 'Direct Institutional'>('ALL');
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]>('ALL');
   const [reminders, setReminders] = useState<string[]>(['c1']);
 
+  const next = getNextRound();
+  const nextStatus = next ? getRoundStatus(next) : null;
+  const rounds = sortedSchedule().filter(r => filter === 'ALL' || r.system === filter);
+
   function toggleReminder(id: string, name: string) {
-    if (reminders.includes(id)) {
-      setReminders(prev => prev.filter(r => r !== id));
-      showToast(`Reminder removed for ${name}`);
-    } else {
-      setReminders(prev => [...prev, id]);
-      showToast(`Reminder set for ${name}`);
-    }
+    const on = reminders.includes(id);
+    setReminders(prev => (on ? prev.filter(r => r !== id) : [...prev, id]));
+    showToast(on ? `Reminder removed for ${name}` : `Reminder set for ${name}`);
   }
 
-  const filteredSchedule = COUNSELLING_SCHEDULE.filter(
-    item => selectedFilter === 'ALL' || item.system === selectedFilter
-  );
-
   return (
-    <div className="min-h-screen bg-[#F8F9FB] text-slate-800">
+    <div className="min-h-screen bg-paper">
       <Navbar />
-
-      {/* Hero — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-4">
-            <Clock size={12} className="text-blue-400" />
-            Live Counselling Portal · Academic Year 2026-27
-          </div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-white tracking-[-0.03em] leading-tight mb-3">
-            Admissions & Counselling Schedule
-          </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">
-            Track real-time JoSAA rounds, Maharashtra CAP seat matrices, cutoff announcements, and mandatory document verification deadlines in one place.
-          </p>
-
-          <div className="mt-8 flex items-center gap-3 flex-wrap">
-            <Link
-              href="/admission-probability"
-              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
-            >
-              <TrendingUp size={14} /> Calculate Admission Odds
+      <PageHeader
+        label="Admissions · academic year 2026–27"
+        title="Your admissions command center."
+        description="Counselling rounds, what each one needs from you, and the documents to have ready."
+        actions={
+          <>
+            <Link href="/admission-probability" className="h-10 px-4 rounded-xl bg-ink text-paper text-sm inline-flex items-center gap-2 hover:bg-accent transition-colors">
+              Admission odds <ArrowRight size={14} />
             </Link>
-            <Link
-              href="/student/deadlines"
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl text-xs font-bold flex items-center gap-2 transition-all"
-            >
-              <Calendar size={14} /> Personalized Deadlines
+            <Link href="/student/deadlines" className="h-10 px-4 rounded-xl border border-line bg-surface text-sm inline-flex items-center hover:border-ink-2 transition-colors">
+              My deadlines
             </Link>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      {/* Main Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column: Live Counselling Schedule */}
-          <div className="lg:col-span-8 space-y-6">
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-                <div>
-                  <h2 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
-                    <Calendar size={16} className="text-blue-600" />
-                    Centralized Counselling Rounds Schedule
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">Updated every 24 hours from official state & national boards</p>
-                </div>
-
-                <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-                  {(['ALL', 'JoSAA / CSAB', 'MHT-CET CAP', 'Direct Institutional'] as const).map(sys => (
-                    <button
-                      key={sys}
-                      onClick={() => setSelectedFilter(sys)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                        selectedFilter === sys
-                          ? 'bg-[#0B1F3A] text-white shadow-sm'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
-                    >
-                      {sys}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Rounds List */}
-              <div className="space-y-4">
-                {filteredSchedule.map(round => {
-                  const hasReminder = reminders.includes(round.id);
-                  return (
-                    <div
-                      key={round.id}
-                      className="p-5 border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-sm transition-all bg-white relative overflow-hidden"
-                    >
-                      {round.status === 'active' && (
-                        <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-emerald-500" />
-                      )}
-
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-[#1a56db]">
-                              {round.system}
-                            </span>
-                            {round.status === 'active' ? (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active Round
-                              </span>
-                            ) : (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600">
-                                Starts in {round.urgencyDays} Days
-                              </span>
-                            )}
-                          </div>
-                          <h3 className="font-bold text-sm sm:text-base text-slate-900">{round.roundName}</h3>
-                        </div>
-
-                        <button
-                          onClick={() => toggleReminder(round.id, round.roundName)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                            hasReminder
-                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                              : 'bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-[#1a56db]'
-                          }`}
-                        >
-                          <Bell size={12} className={hasReminder ? 'fill-amber-500' : ''} />
-                          {hasReminder ? 'Reminder Set' : 'Set Alert'}
-                        </button>
-                      </div>
-
-                      <p className="text-xs text-slate-600 leading-relaxed mb-3">
-                        {round.description}
-                      </p>
-
-                      <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-100">
-                        <span className="text-slate-400 font-medium flex items-center gap-1">
-                          <Clock size={13} className="text-[#1a56db]" /> Window: {round.dates}
-                        </span>
-
-                        <a
-                          href={round.actionUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-[#1a56db] font-semibold flex items-center gap-1 hover:underline"
-                        >
-                          Official Portal <ExternalLink size={12} />
-                        </a>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Admission Process Stages */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-              <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <FileCheck size={16} className="text-emerald-600" />
-                Standard 6-Step Admission Workflow
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {[
-                  { step: '01', title: 'Portal Registration', desc: 'Submit candidate details and entrance roll number on centralized portal.' },
-                  { step: '02', title: 'Document Verification', desc: 'Online scrutiny or physical reporting at designated facilitation centers.' },
-                  { step: '03', title: 'Merit List Publication', desc: 'State / All-India provisional and final merit rank generation.' },
-                  { step: '04', title: 'Option Form (Choices)', desc: 'Prioritize colleges and branch preference sequence.' },
-                  { step: '05', title: 'Seat Allotment Result', desc: 'Algorithm allocates seat matching rank and preferred choices.' },
-                  { step: '06', title: 'Freeze / Float & Reporting', desc: 'Accept seat, pay acceptance fee, or opt for higher preference in next round.' },
-                ].map((s, idx) => (
-                  <div key={idx} className="p-3.5 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="text-xs font-extrabold text-[#1a56db] block mb-1">Step {s.step}</span>
-                    <h4 className="text-xs font-bold text-slate-900 mb-1">{s.title}</h4>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">{s.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Required Documents & Quick Tools */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Required Documents Checklist */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                  <Shield size={16} className="text-[#1a56db]" />
-                  Document Verification Checklist
-                </h3>
-                <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
-                  Mandatory
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">Keep these scanned documents ready before opening of option form:</p>
-
-              <div className="space-y-3">
-                {REQUIRED_DOCUMENTS.map((doc, idx) => (
-                  <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <CheckCircle2 size={13} className={doc.essential ? 'text-emerald-600' : 'text-slate-400'} />
-                      <h4 className="text-xs font-bold text-slate-800">{doc.title}</h4>
-                    </div>
-                    <p className="text-[11px] text-slate-500 leading-relaxed pl-5">
-                      {doc.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* AI Decision Assistant Card */}
-            <div className="bg-gradient-to-br from-[#0f1b2d] to-[#1a2f4e] text-white rounded-2xl p-5 shadow-md space-y-3">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-blue-400" />
-                <h3 className="font-bold text-sm">Need Help with Choice Filling?</h3>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Our AI Decision Layer calculates your rank cutoffs across previous 4 years and generates an optimized, high-probability college preference sequence.
+      {/* Next deadline */}
+      {next && nextStatus && (
+        <section className="bg-ink text-paper">
+          <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-10 sm:py-12 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-6 md:gap-12">
+            <div>
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-paper/50">Next deadline</p>
+              <p className="font-display text-7xl sm:text-8xl font-semibold tracking-[-0.035em] leading-[0.85] nums mt-2">
+                {nextStatus.days}
+                <span className="text-2xl text-paper/50 ml-2 tracking-normal">{nextStatus.status === 'open' ? 'days left' : 'days'}</span>
               </p>
-              <Link
-                href="/ai-college-finder"
-                className="w-full py-2.5 bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+            </div>
+            <div>
+              <p className="font-display text-2xl sm:text-3xl font-semibold tracking-[-0.02em]">{next.roundName}</p>
+              <p className="mt-2 text-paper/65">{next.action}</p>
+              <p className="mt-1 font-mono text-xs text-paper/45 nums">{next.dates}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => toggleReminder(next.id, next.shortName)}
+                aria-pressed={reminders.includes(next.id)}
+                className={cn(
+                  'h-11 px-4 rounded-xl text-sm inline-flex items-center gap-2 transition-colors cursor-pointer',
+                  reminders.includes(next.id) ? 'bg-white text-ink' : 'border border-white/25 hover:border-white/60',
+                )}
               >
-                Launch AI Option Assistant <ChevronRight size={13} />
-              </Link>
+                {reminders.includes(next.id) ? <BellRing size={15} /> : <Bell size={15} />}
+                {reminders.includes(next.id) ? 'Reminder on' : 'Remind me'}
+              </button>
+              <a
+                href={next.actionUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="h-11 px-4 rounded-xl bg-accent text-white text-sm inline-flex items-center gap-2 hover:bg-accent-deep transition-colors"
+              >
+                Official portal <ArrowUpRight size={15} />
+              </a>
             </div>
           </div>
-        </div>
+        </section>
+      )}
+
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
+        {/* Timeline */}
+        <section className="py-16 sm:py-20" aria-labelledby="timeline-title">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-12">
+            <div>
+              <p className="label">Timeline</p>
+              <h2 id="timeline-title" className="font-display mt-2 text-3xl sm:text-4xl font-semibold tracking-[-0.025em]">October, round by round.</h2>
+            </div>
+            <div role="tablist" aria-label="Counselling system" className="flex gap-1 overflow-x-auto scrollbar-none">
+              {FILTERS.map(f => (
+                <button
+                  key={f}
+                  role="tab"
+                  aria-selected={filter === f}
+                  onClick={() => setFilter(f)}
+                  className={cn('relative h-9 px-3.5 rounded-lg text-[13px] whitespace-nowrap transition-colors cursor-pointer', filter === f ? 'text-paper' : 'text-ink-2 hover:bg-surface')}
+                >
+                  {filter === f && <motion.span layoutId="adm-filter" className="absolute inset-0 rounded-lg bg-ink" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+                  <span className="relative">{f === 'ALL' ? 'All rounds' : f}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <AdmissionsTimeline key={filter} rounds={rounds} />
+
+          {/* Reminders */}
+          <ul className="mt-14 border-t border-ink">
+            {rounds.map(r => {
+              const s = getRoundStatus(r);
+              const on = reminders.includes(r.id);
+              return (
+                <li key={r.id} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] items-center gap-3 sm:gap-6 py-4 border-b border-line">
+                  <div>
+                    <p className="font-medium">{r.roundName}</p>
+                    <p className="text-sm text-muted">{r.system} · {r.dates}</p>
+                  </div>
+                  <span className={cn('font-mono text-xs nums', s.status === 'open' ? 'text-positive' : 'text-muted')}>
+                    {s.status === 'upcoming' ? `in ${s.days}d` : s.status === 'open' ? `open · ${s.days}d left` : 'closed'}
+                  </span>
+                  <button
+                    onClick={() => toggleReminder(r.id, r.shortName)}
+                    aria-pressed={on}
+                    className={cn('h-9 px-3 rounded-lg text-xs inline-flex items-center gap-1.5 border transition-colors cursor-pointer justify-self-start', on ? 'bg-caution-soft border-caution/30 text-caution' : 'border-line hover:border-ink-2')}
+                  >
+                    {on ? <BellRing size={13} /> : <Bell size={13} />}
+                    {on ? 'Reminder set' : 'Set reminder'}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        {/* Documents + choice filling */}
+        <section className="pb-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14" aria-label="Preparation">
+          <Reveal className="lg:col-span-7">
+            <p className="label">Documents</p>
+            <h2 className="font-display mt-2 mb-6 text-3xl sm:text-4xl font-semibold tracking-[-0.025em]">Have these ready.</h2>
+            <DocumentChecklist />
+          </Reveal>
+
+          <Reveal delay={0.08} className="lg:col-span-5 space-y-6">
+            <div className="rounded-[22px] bg-surface border border-line p-6 sm:p-7">
+              <p className="label">Choice filling</p>
+              <p className="mt-2 font-display text-2xl font-semibold tracking-[-0.02em]">Order your preferences with your odds in view.</p>
+              <p className="mt-2 text-sm text-muted">
+                Use the college finder to shortlist by fit, then check each option&apos;s admission probability before you lock your order.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Link href="/ai-college-finder" className="h-10 px-4 rounded-xl bg-ink text-paper text-sm inline-flex items-center gap-2 hover:bg-accent transition-colors">
+                  Open the finder <ArrowRight size={14} />
+                </Link>
+                <Link href="/admission-probability" className="h-10 px-4 rounded-xl border border-line text-sm inline-flex items-center hover:border-ink-2 transition-colors">
+                  Check odds
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <p className="label mb-3">How a counselling round runs</p>
+              <ol className="border-l border-line ml-1.5">
+                {ADMISSION_STEPS.map(s => (
+                  <li key={s.step} className="relative pl-6 pb-5 last:pb-0">
+                    <span className="absolute -left-[4.5px] top-1.5 h-2 w-2 rounded-full bg-ink" />
+                    <p className="text-[15px] font-medium"><span className="font-mono text-xs text-muted mr-2">{s.step}</span>{s.title}</p>
+                    <p className="text-sm text-muted mt-0.5">{s.desc}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </Reveal>
+        </section>
+
+        <p className="pb-12 text-xs text-faint">Demo schedule for this prototype — always confirm dates on the official counselling portals.</p>
       </div>
 
       <Footer />

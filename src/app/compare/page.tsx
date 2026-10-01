@@ -1,337 +1,456 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  X, Sparkles, GitCompare, Plus, CheckCircle2, AlertTriangle, TrendingUp,
-  Briefcase, DollarSign, Trees, ArrowRight, ShieldCheck, Check, ChevronDown
-} from 'lucide-react';
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, ChevronDown, Plus, X } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { COLLEGES, simulateAIMatch, STUDENT_PROFILE } from '@/lib/mockData';
-import { formatPackage, getScoreColor } from '@/lib/utils';
+import PageHeader from '@/components/layout/PageHeader';
+import Monogram from '@/components/college/Monogram';
+import SaveButton from '@/components/saved/SaveButton';
+import AnimatedNumber from '@/components/motion/AnimatedNumber';
+import { EASE_OUT } from '@/components/motion/Reveal';
+import { COLLEGES, simulateAIMatch, STUDENT_PROFILE, type College } from '@/lib/mockData';
+import { roiOf } from '@/lib/discovery';
+import { formatPackage } from '@/lib/utils';
 import { useApp } from '@/context/AppContext';
 import { useToast } from '@/components/ui/Toast';
+import { cn } from '@/lib/utils';
 
-function getMonogram(name: string): string {
-  const words = name.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/);
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 3).toUpperCase();
+type Focus = 'overall' | 'placement' | 'affordability' | 'campus';
+
+const FOCI: { id: Focus; label: string }[] = [
+  { id: 'overall', label: 'Overall' },
+  { id: 'placement', label: 'Placements' },
+  { id: 'affordability', label: 'Affordability' },
+  { id: 'campus', label: 'Campus' },
+];
+
+interface BarMetric {
+  key: string;
+  group: Focus;
+  label: string;
+  value: (c: College) => number;
+  fmt: (v: number) => string;
+  lowerIsBetter?: boolean;
 }
+
+const acres = (c: College) => parseFloat(c.campus) || 0;
+
+const BAR_METRICS: BarMetric[] = [
+  { key: 'reality', group: 'overall', label: 'Reality Score', value: c => c.realityScore, fmt: v => `${v}` },
+  { key: 'rating', group: 'overall', label: 'Student satisfaction', value: c => c.studentRating, fmt: v => `${v.toFixed(1)} / 5` },
+  { key: 'placement', group: 'placement', label: 'Placement rate', value: c => c.placementPercent, fmt: v => `${v}%` },
+  { key: 'median', group: 'placement', label: 'Median package', value: c => c.medianPackage, fmt: v => formatPackage(v) },
+  { key: 'average', group: 'placement', label: 'Average package', value: c => c.averagePackage, fmt: v => formatPackage(v) },
+  { key: 'fee', group: 'affordability', label: 'Tuition / yr', value: c => c.totalFees, fmt: v => `₹${v}L`, lowerIsBetter: true },
+  { key: 'hostelFee', group: 'affordability', label: 'Hostel / yr', value: c => c.hostelFees, fmt: v => `₹${v}L`, lowerIsBetter: true },
+  { key: 'roi', group: 'affordability', label: 'Median ÷ tuition', value: roiOf, fmt: v => `${v.toFixed(1)}×` },
+  { key: 'campusRating', group: 'campus', label: 'Student rating', value: c => c.studentRating, fmt: v => `${v.toFixed(1)} / 5` },
+  { key: 'acres', group: 'campus', label: 'Campus area', value: acres, fmt: v => `${v} acres` },
+];
 
 const COMPARE_ROWS = [
   { key: 'type', label: 'University Type' },
   { key: 'naacGrade', label: 'NAAC Accreditation' },
   { key: 'accreditation', label: 'Approvals' },
   { key: 'totalFees', label: 'Tuition Fee (Per Year)', format: (v: number) => `₹${v} Lakhs` },
-  { key: 'placementPercent', label: 'Audited Placement %', format: (v: number) => `${v}%` },
+  { key: 'placementPercent', label: 'Placement %', format: (v: number) => `${v}%` },
   { key: 'medianPackage', label: 'Median Package', format: (v: number) => formatPackage(v) },
   { key: 'averagePackage', label: 'Average Package', format: (v: number) => formatPackage(v) },
   { key: 'highestPackage', label: 'Highest Package', format: (v: number) => formatPackage(v) },
-  { key: 'studentRating', label: 'Student Satisfaction', format: (v: number) => `★ ${v} / 5.0` },
-  { key: 'totalReviews', label: 'Verified Reviews', format: (v: number) => `${v.toLocaleString()} verified` },
+  { key: 'studentRating', label: 'Student Satisfaction', format: (v: number) => `${v} / 5.0` },
+  { key: 'totalReviews', label: 'Reviews', format: (v: number) => v.toLocaleString('en-IN') },
   { key: 'realityScore', label: 'Reality Score', format: (v: number) => `${v} / 100` },
-  { key: 'hasHostel', label: 'Hostel Accommodation', format: (v: boolean) => v ? 'Guaranteed Available' : 'Limited / Off-Campus' },
-  { key: 'hasWifi', label: 'Campus High-Speed Wi-Fi', format: (v: boolean) => v ? '1Gbps Campus-wide' : 'Basic' },
-  { key: 'hasSports', label: 'Sports Complex', format: (v: boolean) => v ? 'Olympic-grade / Indoor Stadium' : 'Standard' },
-  { key: 'campus', label: 'Campus Area', format: (v: string) => v || 'Extensive' },
+  { key: 'hasHostel', label: 'Hostel', format: (v: boolean) => (v ? 'Available' : 'Limited / off-campus') },
+  { key: 'hasWifi', label: 'Wi-Fi', format: (v: boolean) => (v ? 'Campus-wide' : 'Basic') },
+  { key: 'hasSports', label: 'Sports Complex', format: (v: boolean) => (v ? 'Available' : 'Standard') },
+  { key: 'campus', label: 'Campus Area', format: (v: string) => v || '—' },
   { key: 'established', label: 'Year Established' },
 ];
 
-function getBest(colleges: typeof COLLEGES, key: string): number {
-  const vals = colleges.map(c => Number((c as unknown as Record<string, unknown>)[key])).filter(v => !isNaN(v));
-  if (!vals.length) return -1;
-  if (key === 'totalFees') return vals.indexOf(Math.min(...vals));
-  return vals.indexOf(Math.max(...vals));
+function bestIndex(colleges: College[], key: string): number {
+  const vals = colleges.map(c => Number((c as unknown as Record<string, unknown>)[key]));
+  if (vals.some(v => isNaN(v))) return -1;
+  return key === 'totalFees' ? vals.indexOf(Math.min(...vals)) : vals.indexOf(Math.max(...vals));
 }
 
 export default function ComparePage() {
+  const reduce = useReducedMotion();
   const { compareList, removeFromCompare, addToCompare } = useApp();
   const { showToast } = useToast();
+  const [focus, setFocus] = useState<Focus>('overall');
+  const [adding, setAdding] = useState(false);
+  const [building, setBuilding] = useState(true);
+  const addRef = useRef<HTMLDivElement>(null);
 
-  const compareColleges = COLLEGES.filter(c => compareList.includes(c.id));
-  const allOtherColleges = COLLEGES.filter(c => !compareList.includes(c.id));
-  const [showAddDropdown, setShowAddDropdown] = useState(false);
-  const [aiPriority, setAiPriority] = useState<'placement' | 'affordability' | 'campus'>('placement');
+  const colleges = compareList.map(id => COLLEGES.find(c => c.id === id)).filter((c): c is College => Boolean(c));
+  const others = COLLEGES.filter(c => !compareList.includes(c.id));
 
-  function addCollege(id: string) {
-    addToCompare(id);
-    setShowAddDropdown(false);
-    showToast('College added to comparison matrix');
-  }
+  useEffect(() => {
+    const t = setTimeout(() => setBuilding(false), reduce ? 0 : 380);
+    return () => clearTimeout(t);
+  }, [reduce]);
 
-  const matches = compareColleges.map(c => simulateAIMatch(c.id, STUDENT_PROFILE));
-  const bestMatchIdx = matches.length > 0
-    ? matches.reduce((best, m, i) => m.matchPercent > matches[best].matchPercent ? i : best, 0)
-    : 0;
+  useEffect(() => {
+    const close = (e: MouseEvent) => addRef.current && !addRef.current.contains(e.target as Node) && setAdding(false);
+    window.addEventListener('mousedown', close);
+    return () => window.removeEventListener('mousedown', close);
+  }, []);
 
-  const AI_INSIGHTS: Record<string, string> = {
-    placement: compareColleges[0]
-      ? `Based on audited placement data, ${compareColleges.reduce((best, c) => c.placementPercent > best.placementPercent ? c : best, compareColleges[0]).shortName} leads with ${Math.max(...compareColleges.map(c => c.placementPercent))}% placement rate and the strongest Tier-1 recruiter presence.`
-      : '',
-    affordability: compareColleges[0]
-      ? `For optimal ROI and low debt, ${compareColleges.reduce((best, c) => c.totalFees < best.totalFees ? c : best, compareColleges[0]).shortName} delivers exceptional value at ₹${Math.min(...compareColleges.map(c => c.totalFees))}L/year — well below peer group averages.`
-      : '',
-    campus: compareColleges[0]
-      ? `For holistic campus life and facilities, ${compareColleges.reduce((best, c) => c.studentRating > best.studentRating ? c : best, compareColleges[0]).shortName} commands the highest verified satisfaction score (${Math.max(...compareColleges.map(c => c.studentRating))}/5.0).`
-      : '',
-  };
+  const matches = colleges.map(c => simulateAIMatch(c.id, STUDENT_PROFILE));
+
+  const metrics = [...BAR_METRICS].sort((a, b) => Number(b.group === focus) - Number(a.group === focus));
+
+  const addMenu = (
+    <div ref={addRef} className="relative">
+      <button
+        onClick={() => setAdding(a => !a)}
+        disabled={others.length === 0 || compareList.length >= 5}
+        aria-expanded={adding}
+        className="h-10 px-4 rounded-xl bg-ink text-paper text-sm inline-flex items-center gap-2 hover:bg-accent disabled:opacity-40 transition-colors cursor-pointer"
+      >
+        <Plus size={15} /> Add college <ChevronDown size={14} />
+      </button>
+      <AnimatePresence>
+        {adding && (
+          <motion.ul
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-full mt-2 z-30 w-64 rounded-xl border border-line bg-surface p-1.5 shadow-xl"
+          >
+            {others.map(c => (
+              <li key={c.id}>
+                <button
+                  onClick={() => {
+                    addToCompare(c.id);
+                    setAdding(false);
+                    showToast(`${c.shortName} added to comparison`);
+                  }}
+                  className="w-full flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-paper cursor-pointer"
+                >
+                  {c.shortName} <span className="font-mono text-xs text-muted">{c.realityScore}</span>
+                </button>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
+      <PageHeader
+        label="Compare"
+        title="Show me what matters."
+        description="Choose a lens and the comparison rearranges around it."
+        actions={addMenu}
+      />
 
-      {/* Header Banner — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-12 pb-14 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-3">
-                <GitCompare size={13} className="text-blue-400" />
-                Side-by-Side Trade-off Engine
-              </div>
-              <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-[-0.03em] leading-tight">
-                Compare Institutions
-              </h1>
-              <p className="mt-2 text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
-                Analyze trade-offs in real time across verified salary records, ROI, total cost of study, and student satisfaction.
-              </p>
-            </div>
-
-            {compareColleges.length > 0 && (
-              <div className="flex items-center gap-2 relative">
-                <button
-                  onClick={() => setShowAddDropdown(!showAddDropdown)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
-                >
-                  <Plus size={14} />
-                  Add College to Matrix
-                  <ChevronDown size={13} />
-                </button>
-
-                {showAddDropdown && allOtherColleges.length > 0 && (
-                  <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-30 w-64 max-h-64 overflow-y-auto p-1 text-slate-800">
-                    {allOtherColleges.map(c => (
-                      <button
-                        key={c.id}
-                        onClick={() => addCollege(c.id)}
-                        className="w-full text-left px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors flex items-center justify-between"
-                      >
-                        <span>{c.shortName}</span>
-                        <Plus size={12} className="text-slate-400" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-        {compareColleges.length < 2 ? (
-          <div className="bg-white border border-slate-200/80 rounded-2xl text-center py-20 px-6 shadow-xs max-w-2xl mx-auto">
-            <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
-              <GitCompare size={32} />
-            </div>
-            <h2 className="font-display font-extrabold text-xl text-slate-900 mb-2">Select At Least 2 Colleges</h2>
-            <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
-              Add multiple colleges from the directory to unlock AI-powered trade-off matrices, fee comparisons, and placement audits.
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-10">
+        {colleges.length < 2 ? (
+          <div className="max-w-xl py-16">
+            <p className="font-display text-3xl font-semibold tracking-[-0.025em]">Add at least two colleges to compare.</p>
+            <p className="mt-2 text-muted">
+              You have {colleges.length === 0 ? 'none' : `only ${colleges[0].shortName}`} in your comparison. Save colleges from search or rankings, then tap Compare.
             </p>
-            <Link
-              href="/colleges"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0B1F3A] hover:bg-blue-900 text-white rounded-xl text-xs font-bold transition-colors shadow-sm"
-            >
-              <Plus size={14} /> Browse & Add Colleges
-            </Link>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {others.slice(0, 4).map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => addToCompare(c.id)}
+                  className="h-10 px-4 rounded-xl border border-line bg-surface text-sm inline-flex items-center gap-2 hover:border-ink-2 transition-colors cursor-pointer"
+                >
+                  <Plus size={14} /> {c.shortName}
+                </button>
+              ))}
+              <Link href="/colleges" className="h-10 px-4 rounded-xl text-sm inline-flex items-center text-accent hover:underline">
+                Browse all →
+              </Link>
+            </div>
           </div>
         ) : (
           <>
-            {/* ── AI COMPARISON ASSISTANT ── */}
-            <div className="bg-[#0B1F3A] border border-blue-900/60 text-white rounded-2xl p-6 sm:p-7 shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                    <Sparkles size={15} />
-                  </div>
-                  <h2 className="font-display font-bold text-base text-white">AI Trade-Off Analysis</h2>
-                </div>
-
-                {compareColleges[bestMatchIdx] && (
-                  <p className="text-slate-300 text-xs sm:text-sm mb-6 max-w-3xl leading-relaxed">
-                    Based on your candidate preferences (B.Tech CSE, 87th percentile bracket, Maharashtra target),{' '}
-                    <strong className="text-white font-bold">{compareColleges[bestMatchIdx].shortName}</strong> holds the highest predictive fit score at{' '}
-                    <span className="text-blue-400 font-extrabold">{matches[bestMatchIdx]?.matchPercent || 92}%</span>.
-                  </p>
-                )}
-
-                {/* Match Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 mb-6">
-                  {compareColleges.map((c, i) => {
-                    const m = matches[i];
-                    const isBest = i === bestMatchIdx;
-
-                    return (
-                      <div
-                        key={c.id}
-                        className={`p-4 rounded-xl border transition-all ${
-                          isBest
-                            ? 'bg-blue-600/20 border-blue-400/40 shadow-sm'
-                            : 'bg-white/5 border-white/10'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <p className="font-display font-bold text-sm text-white truncate">{c.shortName}</p>
-                          {isBest && (
-                            <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold rounded-full uppercase tracking-wider shrink-0">
-                              Top Match
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="font-display font-black text-2xl text-blue-300">{m?.matchPercent || 85}%</span>
-                          <span className="text-[11px] text-slate-400 font-medium">fit score</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Priority switcher */}
-                <div className="pt-4 border-t border-white/10">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">
-                    Evaluate By Dimension:
-                  </p>
-                  <div className="flex items-center gap-2 flex-wrap mb-3">
-                    {[
-                      { key: 'placement' as const, label: 'Placements & Packages', icon: Briefcase },
-                      { key: 'affordability' as const, label: 'Affordability & ROI', icon: DollarSign },
-                      { key: 'campus' as const, label: 'Campus & Infrastructure', icon: Trees },
-                    ].map(({ key, label, icon: Icon }) => (
-                      <button
-                        key={key}
-                        onClick={() => setAiPriority(key)}
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                          aiPriority === key
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'bg-white/10 hover:bg-white/15 text-slate-300'
-                        }`}
-                      >
-                        <Icon size={13} />
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={aiPriority}
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-white/5 p-3.5 rounded-xl border border-white/10"
-                    >
-                      {AI_INSIGHTS[aiPriority]}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-            </div>
-
-            {/* ── COMPARISON TABLE ── */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-x-auto">
-              <div style={{ minWidth: `${Math.max(680, 220 + compareColleges.length * 200)}px` }}>
-                {/* College headers */}
-                <div
-                  className="grid border-b border-slate-200 bg-slate-50/70"
-                  style={{ gridTemplateColumns: `220px repeat(${compareColleges.length}, 1fr)` }}
-                >
-                  <div className="p-5 flex items-end justify-between border-r border-slate-200/80">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Evaluation Metric</span>
-                  </div>
-
-                  {compareColleges.map(c => (
-                    <div key={c.id} className="p-5 border-r border-slate-200/80 last:border-r-0 text-center relative group">
-                      <button
-                        onClick={() => { removeFromCompare(c.id); showToast('Removed from comparison'); }}
-                        className="absolute top-3 right-3 w-6 h-6 rounded-lg bg-slate-100 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors"
-                        title="Remove"
-                      >
-                        <X size={12} />
-                      </button>
-
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0B1F3A] to-[#1E3A8A] text-white font-display font-black text-xs flex items-center justify-center mx-auto mb-2 shadow-2xs">
-                        {getMonogram(c.shortName)}
-                      </div>
-
-                      <Link href={`/colleges/${c.id}`} className="font-display font-bold text-sm text-slate-900 hover:text-blue-600 transition-colors block">
-                        {c.shortName}
-                      </Link>
-                      <p className="text-[11px] text-slate-400 mt-0.5">{c.city}, {c.state}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Data rows */}
-                <div className="divide-y divide-slate-100">
-                  {COMPARE_ROWS.map((row) => {
-                    const bestIdx = getBest(compareColleges, row.key);
-
-                    return (
-                      <div
-                        key={row.key}
-                        className="grid hover:bg-slate-50/50 transition-colors items-center"
-                        style={{ gridTemplateColumns: `220px repeat(${compareColleges.length}, 1fr)` }}
-                      >
-                        <div className="p-4 px-5 text-xs font-bold text-slate-600 border-r border-slate-100 bg-slate-50/30">
-                          {row.label}
-                        </div>
-
-                        {compareColleges.map((c, colIdx) => {
-                          const val = (c as unknown as Record<string, unknown>)[row.key];
-                          const isBest = colIdx === bestIdx;
-                          const formattedVal = row.format
-                            ? (row.format as (v: unknown) => string)(val)
-                            : String(val ?? '—');
-
-                          return (
-                            <div
-                              key={c.id}
-                              className={`p-4 border-r border-slate-100 last:border-r-0 text-center text-xs font-semibold ${
-                                isBest
-                                  ? 'bg-blue-50/40 text-blue-900 font-bold'
-                                  : 'text-slate-700'
-                              }`}
-                            >
-                              <div className="flex items-center justify-center gap-1.5">
-                                <span>{formattedVal}</span>
-                                {isBest && (
-                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600" title="Best in group" />
-                                )}
-                              </div>
+            {/* Selected colleges */}
+            <div className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto scrollbar-none">
+              <LayoutGroup>
+                <ul className="grid auto-cols-[minmax(240px,1fr)] grid-flow-col gap-3 sm:gap-4 min-w-max sm:min-w-0">
+                  <AnimatePresence initial={false}>
+                    {colleges.map((c, i) => {
+                      const best = matches[i].matchPercent === Math.max(...matches.map(m => m.matchPercent));
+                      return (
+                        <motion.li
+                          key={c.id}
+                          layout
+                          initial={{ opacity: 0, scale: 0.96 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.96 }}
+                          transition={{ duration: 0.3, ease: EASE_OUT }}
+                          className={cn('relative rounded-[22px] p-5 sm:p-6 border', best ? 'bg-ink text-paper border-ink' : 'bg-surface border-line')}
+                        >
+                          <button
+                            onClick={() => {
+                              removeFromCompare(c.id);
+                              showToast(`${c.shortName} removed from comparison`);
+                            }}
+                            aria-label={`Remove ${c.shortName}`}
+                            className={cn('absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer', best ? 'hover:bg-white/10 text-paper/60' : 'hover:bg-paper text-faint')}
+                          >
+                            <X size={14} />
+                          </button>
+                          <Monogram name={c.shortName} size="md" tone={best ? 'accent' : 'ink'} />
+                          <Link href={`/colleges/${c.id}`} className="mt-4 block font-display text-2xl font-semibold tracking-[-0.022em] leading-tight hover:underline">
+                            {c.shortName}
+                          </Link>
+                          <p className={cn('text-sm', best ? 'text-paper/60' : 'text-muted')}>{c.city}, {c.state}</p>
+                          <div className="mt-6 flex items-end justify-between">
+                            <div>
+                              <p className={cn('font-mono text-[10.5px] uppercase tracking-[0.1em]', best ? 'text-paper/50' : 'text-muted')}>Reality Score</p>
+                              <p className="font-display text-5xl font-semibold tracking-[-0.03em] nums leading-none mt-1">{c.realityScore}</p>
                             </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                </div>
+                            {best && <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-[#9db0ff]">Top fit</span>}
+                          </div>
+                        </motion.li>
+                      );
+                    })}
+                  </AnimatePresence>
+                </ul>
+              </LayoutGroup>
+            </div>
+
+            {/* Focus switcher */}
+            <div className="mt-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <p className="font-display text-2xl font-semibold tracking-[-0.02em]">What matters most to you?</p>
+              <div role="tablist" aria-label="Comparison focus" className="flex p-1 rounded-xl bg-paper-2 border border-line overflow-x-auto scrollbar-none">
+                {FOCI.map(f => (
+                  <button
+                    key={f.id}
+                    role="tab"
+                    aria-selected={focus === f.id}
+                    onClick={() => setFocus(f.id)}
+                    className={cn('relative h-9 px-4 rounded-lg text-[13.5px] whitespace-nowrap transition-colors cursor-pointer', focus === f.id ? 'text-ink font-medium' : 'text-muted hover:text-ink')}
+                  >
+                    {focus === f.id && (
+                      <motion.span layoutId="cmp-focus" className="absolute inset-0 rounded-lg bg-surface border border-line shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
+                    )}
+                    <span className="relative">{f.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
+
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Metric bars */}
+              <section aria-label="Metric comparison" className="lg:col-span-7 rounded-[22px] border border-line bg-surface p-5 sm:p-7">
+                {building ? (
+                  <div aria-live="polite">
+                    <p className="label">Building trade-off view…</p>
+                    <div className="mt-5 space-y-5">
+                      {[0, 1, 2, 3].map(i => (
+                        <div key={i} className="space-y-2">
+                          <div className="skeleton h-3 w-32" />
+                          <div className="skeleton h-2 w-full" />
+                          <div className="skeleton h-2 w-4/5" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <LayoutGroup>
+                    <ul className="space-y-2">
+                      {metrics.map(metric => {
+                        const on = metric.group === focus;
+                        const vals = colleges.map(metric.value);
+                        const max = Math.max(...vals);
+                        const min = Math.min(...vals);
+                        const bestVal = metric.lowerIsBetter ? min : max;
+                        return (
+                          <motion.li
+                            key={metric.key}
+                            layout={reduce ? false : 'position'}
+                            transition={{ layout: { type: 'spring', stiffness: 380, damping: 36 } }}
+                            animate={{ opacity: on ? 1 : 0.38 }}
+                            className={cn('rounded-xl transition-[padding,background-color] duration-300', on ? 'bg-paper/70 p-4' : 'px-4 py-2.5')}
+                          >
+                            <p className={cn('transition-all duration-300', on ? 'font-medium text-[15px]' : 'text-sm text-muted')}>{metric.label}</p>
+                            <div className="mt-2 space-y-1.5">
+                              {colleges.map((c, i) => {
+                                const v = vals[i];
+                                const width = metric.lowerIsBetter ? (min / v) : v / max;
+                                const isBest = v === bestVal;
+                                return (
+                                  <div key={c.id} className="grid grid-cols-[6.5rem_1fr_4.5rem] sm:grid-cols-[8rem_1fr_5.5rem] items-center gap-3">
+                                    <span className="text-xs text-ink-2 truncate">{c.shortName}</span>
+                                    <span className={cn('rounded-full bg-paper-2 overflow-hidden transition-[height] duration-300', on ? 'h-2.5' : 'h-1.5')}>
+                                      <motion.span
+                                        className={cn('block h-full rounded-full origin-left', isBest && on ? 'bg-accent' : 'bg-ink/70')}
+                                        initial={reduce ? false : { scaleX: 0 }}
+                                        animate={{ scaleX: Math.max(0.04, width) }}
+                                        transition={{ duration: 0.55, ease: EASE_OUT }}
+                                      />
+                                    </span>
+                                    <span className={cn('font-mono text-xs text-right nums', isBest && on && 'text-accent font-semibold')}>{metric.fmt(v)}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </motion.li>
+                        );
+                      })}
+                    </ul>
+                  </LayoutGroup>
+                )}
+              </section>
+
+              {/* Trade-off decision panel */}
+              <TradeOffPanel colleges={colleges} matchPercents={matches.map(m => m.matchPercent)} focus={focus} />
+            </div>
+
+            {/* Full table */}
+            <section className="mt-14" aria-labelledby="all-metrics">
+              <div className="flex items-end justify-between pb-3 border-b border-ink">
+                <h2 id="all-metrics" className="font-display text-2xl font-semibold tracking-[-0.02em]">All metrics</h2>
+                <span className="label hidden sm:block">Best in group marked</span>
+              </div>
+              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+                <table className="w-full min-w-[640px] text-sm">
+                  <thead>
+                    <tr className="border-b border-line">
+                      <th scope="col" className="text-left py-4 pr-4 font-normal label w-[200px]">Metric</th>
+                      {colleges.map(c => (
+                        <th key={c.id} scope="col" className="text-left py-4 px-3 font-medium">
+                          <div className="flex items-center gap-2">
+                            {c.shortName}
+                            <SaveButton collegeId={c.id} collegeName={c.shortName} className="scale-90" />
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {COMPARE_ROWS.map(row => {
+                      const best = bestIndex(colleges, row.key);
+                      return (
+                        <tr key={row.key} className="border-b border-line hover:bg-surface/70 transition-colors">
+                          <th scope="row" className="text-left py-3 pr-4 font-normal text-muted">{row.label}</th>
+                          {colleges.map((c, i) => {
+                            const val = (c as unknown as Record<string, unknown>)[row.key];
+                            const text = row.format ? (row.format as (v: unknown) => string)(val) : String(val ?? '—');
+                            return (
+                              <td key={c.id} className={cn('py-3 px-3 nums', i === best && 'font-semibold text-accent-deep')}>
+                                {text}
+                                {i === best && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" aria-label="Best in group" />}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
           </>
         )}
       </div>
 
       <Footer />
     </div>
+  );
+}
+
+function TradeOffPanel({ colleges, matchPercents, focus }: { colleges: College[]; matchPercents: number[]; focus: Focus }) {
+  const reduce = useReducedMotion();
+  const target = STUDENT_PROFILE.location;
+
+  const dims = [
+    { id: 'fit', label: 'Fit', vals: matchPercents, fmt: (v: number) => `${v}%`, lower: false, focus: 'overall' as Focus },
+    { id: 'cost', label: 'Cost', vals: colleges.map(c => c.totalFees), fmt: (v: number) => `₹${v}L`, lower: true, focus: 'affordability' as Focus },
+    { id: 'placements', label: 'Placements', vals: colleges.map(c => c.placementPercent), fmt: (v: number) => `${v}%`, lower: false, focus: 'placement' as Focus },
+    { id: 'location', label: 'Location', vals: colleges.map(c => (c.state === target ? 1 : 0)), fmt: (v: number) => (v ? `In ${target}` : 'Outside'), lower: false, focus: null },
+    { id: 'experience', label: 'Student experience', vals: colleges.map(c => c.studentRating), fmt: (v: number) => `${v.toFixed(1)} / 5`, lower: false, focus: 'campus' as Focus },
+  ];
+
+  const leaderOf = (vals: number[], lower: boolean) => {
+    const best = lower ? Math.min(...vals) : Math.max(...vals);
+    return vals.indexOf(best);
+  };
+
+  const fitLeader = colleges[leaderOf(matchPercents, false)];
+  const placeLeader = colleges[leaderOf(colleges.map(c => c.placementPercent), false)];
+  const costLeader = colleges[leaderOf(colleges.map(c => c.totalFees), true)];
+  const expLeader = colleges[leaderOf(colleges.map(c => c.studentRating), false)];
+
+  const summary: Record<Focus, string> = {
+    overall: `${fitLeader.shortName} is the strongest fit for your profile (${STUDENT_PROFILE.course}, ${STUDENT_PROFILE.exam} ${STUDENT_PROFILE.percentile} percentile, ${target}) at ${Math.max(...matchPercents)}%.`,
+    placement: `${placeLeader.shortName} leads on placements at ${placeLeader.placementPercent}% with a ₹${placeLeader.medianPackage}L median.`,
+    affordability: `${costLeader.shortName} is the most affordable at ₹${costLeader.totalFees}L a year in tuition.`,
+    campus: `${expLeader.shortName} has the highest student rating at ${expLeader.studentRating} / 5.`,
+  };
+
+  return (
+    <section aria-labelledby="tradeoff" className="lg:col-span-5 rounded-[22px] bg-ink text-paper p-5 sm:p-7 self-start lg:sticky lg:top-24">
+      <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-paper/50">Trade-off analysis</p>
+      <h2 id="tradeoff" className="mt-1 font-display text-2xl font-semibold tracking-[-0.02em]">Who wins on what</h2>
+
+      <ul className="mt-6 space-y-4">
+        {dims.map(d => {
+          const lead = leaderOf(d.vals, d.lower);
+          const active = d.focus === focus;
+          return (
+            <li key={d.id} className={cn('rounded-xl px-3 py-3 -mx-3 transition-colors duration-300', active && 'bg-white/[0.06]')}>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className={cn('text-sm', active ? 'text-paper font-medium' : 'text-paper/70')}>{d.label}</span>
+                <span className="text-sm">
+                  <span className="text-[#9db0ff]">{colleges[lead].shortName}</span>
+                  <span className="text-paper/50 font-mono text-xs ml-2 nums">{d.fmt(d.vals[lead])}</span>
+                </span>
+              </div>
+              <div className="mt-2 flex gap-1.5">
+                {colleges.map((c, i) => {
+                  const max = Math.max(...d.vals);
+                  const min = Math.min(...d.vals);
+                  const strength = d.id === 'location' ? d.vals[i] : d.lower ? (max === min ? 1 : (max - d.vals[i]) / (max - min)) : max === min ? 1 : (d.vals[i] - min) / (max - min);
+                  return (
+                    <span key={c.id} title={`${c.shortName}: ${d.fmt(d.vals[i])}`} className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                      <motion.span
+                        className={cn('block h-full rounded-full origin-left', i === lead ? 'bg-[#5b7bff]' : 'bg-white/45')}
+                        initial={reduce ? false : { scaleX: 0 }}
+                        animate={{ scaleX: Math.max(0.08, strength) }}
+                        transition={{ duration: 0.5, ease: EASE_OUT }}
+                      />
+                    </span>
+                  );
+                })}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.p
+          key={focus}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.22 }}
+          className="mt-6 pt-5 border-t border-white/10 text-[15px] leading-relaxed text-paper/85"
+        >
+          {summary[focus]}
+        </motion.p>
+      </AnimatePresence>
+      <p className="mt-3 text-xs text-paper/40">
+        Fit uses the demo student profile. <AnimatedNumber value={colleges.length} /> colleges compared.
+      </p>
+      <Link href={`/colleges/${fitLeader.id}`} className="mt-5 inline-flex items-center gap-1.5 text-sm text-[#9db0ff] hover:underline">
+        Open {fitLeader.shortName} <ArrowUpRight size={14} />
+      </Link>
+    </section>
   );
 }

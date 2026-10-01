@@ -56,21 +56,21 @@ export default function CollegeCard({ college, matchPercent, admissionProb, inde
         {/* Header */}
         <div className="p-5 pb-4">
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#0B1F3A] text-white flex items-center justify-center font-mono font-bold text-xs shrink-0 border border-neutral-300 group-hover:bg-[#2563EB] transition-colors">
+            <div className="w-12 h-12 rounded-xl bg-ink text-white flex items-center justify-center font-mono font-bold text-xs shrink-0 border border-neutral-300 group-hover:bg-[#2563EB] transition-colors">
               {monogram}
             </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h3 className="font-bold text-[#0B1F3A] text-base leading-tight group-hover:text-[#2563EB] transition-colors truncate">
+                  <h3 className="font-bold text-ink text-base leading-tight group-hover:text-[#2563EB] transition-colors truncate">
                     {college.shortName}
                   </h3>
                   <p className="text-[11px] text-neutral-500 mt-0.5 truncate">{college.name}</p>
                 </div>
                 <div className="text-center px-2 py-1 rounded-lg bg-[#EEF5FF] border border-blue-100 shrink-0">
                   <p className="text-[9px] font-mono uppercase tracking-wider text-[#2563EB] font-bold">Reality</p>
-                  <p className="font-extrabold text-sm text-[#0B1F3A] leading-none mt-0.5">{college.realityScore}</p>
+                  <p className="font-extrabold text-sm text-ink leading-none mt-0.5">{college.realityScore}</p>
                 </div>
               </div>
 
@@ -108,14 +108,14 @@ export default function CollegeCard({ college, matchPercent, admissionProb, inde
 
         {/* Quantitative Metrics Bar */}
         <div>
-          <div className="grid grid-cols-4 border-t border-neutral-100 bg-[#FAFAF8]/50">
+          <div className="grid grid-cols-4 border-t border-neutral-100 bg-paper/50">
             <div className="py-2.5 px-1.5 text-center border-r border-neutral-100">
               <p className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-semibold">Tuition</p>
-              <p className="text-xs sm:text-sm font-bold text-[#0B1F3A] mt-0.5">₹{college.totalFees}L</p>
+              <p className="text-xs sm:text-sm font-bold text-ink mt-0.5">₹{college.totalFees}L</p>
             </div>
             <div className="py-2.5 px-1.5 text-center border-r border-neutral-100">
               <p className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-semibold">Median</p>
-              <p className="text-xs sm:text-sm font-bold text-[#0B1F3A] mt-0.5">{formatPackage(college.medianPackage)}</p>
+              <p className="text-xs sm:text-sm font-bold text-ink mt-0.5">{formatPackage(college.medianPackage)}</p>
             </div>
             <div className="py-2.5 px-1.5 text-center border-r border-neutral-100">
               <p className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-semibold">Placement</p>
@@ -123,7 +123,7 @@ export default function CollegeCard({ college, matchPercent, admissionProb, inde
             </div>
             <div className="py-2.5 px-1.5 text-center">
               <p className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-semibold">Rating</p>
-              <p className="text-xs sm:text-sm font-bold text-[#0B1F3A] mt-0.5">{college.studentRating}</p>
+              <p className="text-xs sm:text-sm font-bold text-ink mt-0.5">{college.studentRating}</p>
             </div>
           </div>
 
@@ -145,11 +145,11 @@ export default function CollegeCard({ college, matchPercent, admissionProb, inde
             <button
               onClick={handleSave}
               className={`px-4 py-2.5 text-xs font-semibold transition-colors ${
-                isSaved ? 'text-[#0B1F3A] bg-neutral-100' : 'text-neutral-400 hover:text-neutral-800 hover:bg-neutral-50'
+                isSaved ? 'text-ink bg-neutral-100' : 'text-neutral-400 hover:text-neutral-800 hover:bg-neutral-50'
               }`}
               title="Save to shortlist"
             >
-              <Bookmark size={14} className={isSaved ? 'fill-[#0B1F3A] text-[#0B1F3A]' : ''} />
+              <Bookmark size={14} className={isSaved ? 'fill-ink text-ink' : ''} />
             </button>
           </div>
         </div>

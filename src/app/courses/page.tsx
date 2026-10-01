@@ -216,11 +216,11 @@ export default function CoursesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB] text-slate-800">
+    <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
       {/* Hero Section — Deep Navy with radial electric blue glow */}
-      <section className="relative bg-[#0B1F3A] text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
+      <section className="relative bg-ink text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -269,7 +269,7 @@ export default function CoursesPage() {
                 onClick={() => setSelectedLevel(tab.id as any)}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   selectedLevel === tab.id
-                    ? 'bg-[#0B1F3A] text-white shadow-sm'
+                    ? 'bg-ink text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -284,7 +284,7 @@ export default function CoursesPage() {
             <select
               value={selectedStream}
               onChange={e => setSelectedStream(e.target.value)}
-              className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-slate-700 focus:outline-none focus:border-[#1a56db]"
+              className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-slate-700 focus:outline-none focus:border-accent"
             >
               <option value="ALL">All Disciplines</option>
               <option value="Computer Science & AI">Computer Science & AI</option>
@@ -313,7 +313,7 @@ export default function CoursesPage() {
               <div>
                 {/* Badges */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-[#1a56db] border border-blue-200">
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-accent border border-blue-200">
                     {course.level} • {course.duration}
                   </span>
                   <span className="text-xs font-semibold text-slate-500">
@@ -322,7 +322,7 @@ export default function CoursesPage() {
                 </div>
 
                 {/* Course Name */}
-                <h3 className="font-bold text-slate-900 text-base leading-snug group-hover:text-[#1a56db] transition-colors">
+                <h3 className="font-bold text-slate-900 text-base leading-snug group-hover:text-accent transition-colors">
                   {course.name}
                 </h3>
                 <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
@@ -389,7 +389,7 @@ export default function CoursesPage() {
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2 mt-2">
                 <Link
                   href={`/courses/${course.id}`}
-                  className="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-[#1a56db] hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-accent hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-1"
                 >
                   Program Details <ChevronRight size={12} />
                 </Link>
@@ -411,7 +411,7 @@ export default function CoursesPage() {
 
                   <Link
                     href={`/colleges?search=${encodeURIComponent(course.shortCode)}`}
-                    className="px-3 py-1.5 bg-[#1a56db] hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1"
+                    className="px-3 py-1.5 bg-accent hover:bg-accent text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1"
                   >
                     <span>Colleges</span>
                     <ChevronRight size={13} />
@@ -443,7 +443,7 @@ export default function CoursesPage() {
               <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2 py-0.5 rounded bg-blue-100 text-[#1a56db] text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded bg-blue-100 text-accent text-[10px] font-bold">
                       {activeModalCourse.level}
                     </span>
                     <span className="text-xs text-slate-500 font-medium">
@@ -483,7 +483,7 @@ export default function CoursesPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {activeModalCourse.keySubjects.map((sub, i) => (
                       <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-xs font-medium text-slate-700">
-                        <CheckCircle2 size={13} className="text-blue-600 shrink-0" />
+                        <CheckCircle2 size={13} className="text-accent shrink-0" />
                         <span>{sub}</span>
                       </div>
                     ))}
@@ -514,7 +514,7 @@ export default function CoursesPage() {
                         </div>
                         <Link
                           href={`/colleges/${col.id}`}
-                          className="px-3 py-1 text-xs font-semibold text-[#1a56db] hover:bg-blue-50 rounded-lg"
+                          className="px-3 py-1 text-xs font-semibold text-accent hover:bg-blue-50 rounded-lg"
                         >
                           View College →
                         </Link>
@@ -534,7 +534,7 @@ export default function CoursesPage() {
                 </Link>
                 <Link
                   href={`/colleges?search=${encodeURIComponent(activeModalCourse.shortCode)}`}
-                  className="px-4 py-2 bg-[#1a56db] hover:bg-blue-600 text-white text-xs font-semibold rounded-xl"
+                  className="px-4 py-2 bg-accent hover:bg-accent text-white text-xs font-semibold rounded-xl"
                 >
                   Browse All Offering Colleges
                 </Link>

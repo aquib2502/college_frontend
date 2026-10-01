@@ -32,11 +32,11 @@ export default function ROICalculatorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
       {/* Hero Banner — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
+      <div className="relative bg-ink text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -60,7 +60,7 @@ export default function ROICalculatorPage() {
           <div className="lg:col-span-6 bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 shadow-xl shadow-blue-950/5 space-y-6">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h2 className="font-display font-bold text-slate-900 text-base">Cost & Compensation Parameters</h2>
-              <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Interactive</span>
+              <span className="text-[11px] font-semibold text-accent bg-blue-50 px-2 py-0.5 rounded-full">Interactive</span>
             </div>
 
             {[
@@ -74,7 +74,7 @@ export default function ROICalculatorPage() {
               <div key={key}>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-700">{label}</label>
-                  <span className="font-display font-black text-xs text-blue-600">
+                  <span className="font-display font-black text-xs text-accent">
                     {inputs[key as keyof typeof inputs]} {unit}
                   </span>
                 </div>
@@ -92,7 +92,7 @@ export default function ROICalculatorPage() {
 
             <button
               onClick={() => setCalculated(true)}
-              className="w-full py-3 bg-[#0B1F3A] hover:bg-blue-900 text-white rounded-xl text-xs font-bold tracking-wide uppercase shadow-sm transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 bg-ink hover:bg-blue-900 text-white rounded-xl text-xs font-bold tracking-wide uppercase shadow-sm transition-colors flex items-center justify-center gap-2"
             >
               <Sparkles size={14} className="text-blue-400" />
               Recalculate Projections
@@ -132,7 +132,7 @@ export default function ROICalculatorPage() {
               </div>
 
               {/* ROI Score Banner */}
-              <div className="p-5 bg-gradient-to-br from-[#0B1F3A] to-[#1E3A8A] text-white rounded-xl text-center shadow-md relative overflow-hidden">
+              <div className="p-5 bg-gradient-to-br from-ink to-ink-2 text-white rounded-xl text-center shadow-md relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-xl pointer-events-none" />
                 <p className="text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">Normalized ROI Index</p>
                 <div className="font-display font-black text-4xl text-white my-1">

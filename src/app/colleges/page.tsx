@@ -89,11 +89,11 @@ function CollegesContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
       {/* Header Banner — Deep Navy with subtle electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-12 pb-14 px-4 overflow-hidden">
+      <div className="relative bg-ink text-white pt-12 pb-14 px-4 overflow-hidden">
         {/* Glow backdrop */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -125,7 +125,7 @@ function CollegesContent() {
           {/* AI Search & Filter Command Bar */}
           <div className="bg-white p-3 rounded-2xl shadow-xl shadow-blue-950/20 border border-slate-200/80 flex flex-col md:flex-row items-stretch gap-2.5">
             <div className="flex-1 relative flex items-center">
-              <Search size={18} className="absolute left-4 text-blue-600 shrink-0" />
+              <Search size={18} className="absolute left-4 text-accent shrink-0" />
               <input
                 type="text"
                 value={query}
@@ -161,14 +161,14 @@ function CollegesContent() {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-2 px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
                   showFilters
-                    ? 'bg-[#0B1F3A] text-white shadow-sm'
+                    ? 'bg-ink text-white shadow-sm'
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
                 }`}
               >
                 <Filter size={14} />
                 <span>Filters</span>
                 {activeFilters.length > 0 && (
-                  <span className="w-4 h-4 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <span className="w-4 h-4 bg-accent text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                     {activeFilters.length}
                   </span>
                 )}
@@ -178,7 +178,7 @@ function CollegesContent() {
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'grid' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-400 hover:text-slate-600'
+                    viewMode === 'grid' ? 'bg-white text-accent shadow-xs' : 'text-slate-400 hover:text-slate-600'
                   }`}
                   title="Grid View"
                 >
@@ -187,7 +187,7 @@ function CollegesContent() {
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'list' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-400 hover:text-slate-600'
+                    viewMode === 'list' ? 'bg-white text-accent shadow-xs' : 'text-slate-400 hover:text-slate-600'
                   }`}
                   title="List View"
                 >
@@ -224,7 +224,7 @@ function CollegesContent() {
                 onClick={() => removeFilter(f)}
                 className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200/60 text-xs font-semibold rounded-full hover:bg-blue-100 transition-colors"
               >
-                {f} <X size={12} className="text-blue-600" />
+                {f} <X size={12} className="text-accent" />
               </button>
             ))}
             <button
@@ -254,13 +254,13 @@ function CollegesContent() {
                 <div className="w-[280px] bg-white border border-slate-200/80 rounded-2xl p-5 sticky top-24 shadow-xs space-y-6">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div className="flex items-center gap-2">
-                      <SlidersHorizontal size={16} className="text-blue-600" />
+                      <SlidersHorizontal size={16} className="text-accent" />
                       <h3 className="font-display font-bold text-slate-900 text-sm tracking-tight">Refine Discovery</h3>
                     </div>
                     {activeFilters.length > 0 && (
                       <button
                         onClick={resetAllFilters}
-                        className="text-[11px] font-semibold text-blue-600 hover:underline"
+                        className="text-[11px] font-semibold text-accent hover:underline"
                       >
                         Clear all
                       </button>
@@ -311,7 +311,7 @@ function CollegesContent() {
                   <div className="pt-2 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Max Fees / Year</p>
-                      <span className="text-xs font-bold text-blue-600">{filters.maxFees ? `≤ ₹${filters.maxFees}L` : 'Any'}</span>
+                      <span className="text-xs font-bold text-accent">{filters.maxFees ? `≤ ₹${filters.maxFees}L` : 'Any'}</span>
                     </div>
                     <input
                       type="range"
@@ -385,13 +385,13 @@ function CollegesContent() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-5">
               <p className="text-sm font-medium text-slate-600">
-                Showing <strong className="font-extrabold text-[#0B1F3A]">{results.length}</strong> matching verified institutions
+                Showing <strong className="font-extrabold text-ink">{results.length}</strong> matching verified institutions
               </p>
             </div>
 
             {results.length === 0 ? (
               <div className="bg-white border border-slate-200/80 rounded-2xl text-center py-20 px-6 shadow-xs">
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 text-accent flex items-center justify-center mx-auto mb-4">
                   <SearchX size={28} />
                 </div>
                 <h3 className="font-display font-bold text-slate-900 text-lg mb-1.5">No colleges match your criteria</h3>
@@ -400,7 +400,7 @@ function CollegesContent() {
                 </p>
                 <button
                   onClick={resetAllFilters}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0B1F3A] text-white rounded-xl text-xs font-bold shadow-sm hover:bg-blue-900 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-ink text-white rounded-xl text-xs font-bold shadow-sm hover:bg-blue-900 transition-colors"
                 >
                   <RotateCcw size={14} />
                   Reset all filters
@@ -427,7 +427,7 @@ function CollegesContent() {
 
 export default function CollegesPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F8F9FB]"><Navbar /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-paper"><Navbar /></div>}>
       <CollegesContent />
     </Suspense>
   );

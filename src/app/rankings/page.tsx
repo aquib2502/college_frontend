@@ -2,219 +2,206 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Info, CheckCircle2, X, Trophy, Sparkles, ArrowUpRight, TrendingUp, ShieldCheck, Star } from 'lucide-react';
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, Info, X } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { COLLEGES } from '@/lib/mockData';
-import { formatPackage } from '@/lib/utils';
+import PageHeader from '@/components/layout/PageHeader';
+import Monogram from '@/components/college/Monogram';
+import SaveButton from '@/components/saved/SaveButton';
+import AnimatedNumber from '@/components/motion/AnimatedNumber';
+import { EASE_OUT } from '@/components/motion/Reveal';
+import { COLLEGES, type College } from '@/lib/mockData';
+import { roiOf } from '@/lib/discovery';
+import { cn } from '@/lib/utils';
 
-const CATEGORIES = [
-  'Overall Reality',
-  'Highest ROI',
-  'Placement Power',
-  'Engineering & Tech',
-  'Computer Science',
-  'Management / MBA',
-  'Government Premier',
-  'Private Elite',
-  'High Value (Under ₹2L)',
+type Metric = { label: string; value: (c: College) => number; fmt: (v: number) => string; max: number; lowerIsBetter?: boolean };
+
+const SCORE: Metric = { label: 'Reality Score', value: c => c.realityScore, fmt: v => `${Math.round(v)}`, max: 100 };
+const ROI: Metric = { label: 'Median ÷ fee', value: roiOf, fmt: v => `${v.toFixed(1)}×`, max: 26 };
+const PLACEMENT: Metric = { label: 'Placement', value: c => c.placementPercent, fmt: v => `${Math.round(v)}%`, max: 100 };
+const FEE: Metric = { label: 'Tuition / yr', value: c => c.totalFees, fmt: v => `₹${v.toFixed(1)}L`, max: 8, lowerIsBetter: true };
+
+const has = (c: College, re: RegExp) => c.courses.some(co => re.test(co.name));
+
+const CATEGORIES: { name: string; metric: Metric; filter?: (c: College) => boolean; note: string }[] = [
+  { name: 'Overall Reality', metric: SCORE, note: 'Weighted Reality Score across outcomes, cost, faculty and sentiment.' },
+  { name: 'Highest ROI', metric: ROI, note: 'Median CTC divided by annual tuition.' },
+  { name: 'Placement Power', metric: PLACEMENT, note: 'Share of eligible students placed.' },
+  { name: 'Engineering & Tech', metric: SCORE, filter: c => has(c, /B\.Tech|B\.E\./), note: 'Colleges offering B.Tech / B.E., by Reality Score.' },
+  { name: 'Computer Science', metric: SCORE, filter: c => has(c, /Computer/), note: 'Colleges offering a computer science programme.' },
+  { name: 'Management / MBA', metric: SCORE, filter: c => has(c, /MBA/), note: 'Colleges offering an MBA programme.' },
+  { name: 'Government Premier', metric: SCORE, filter: c => c.type === 'Government' || c.type === 'Autonomous', note: 'Government and autonomous institutes.' },
+  { name: 'Private Elite', metric: SCORE, filter: c => c.type === 'Deemed' || c.type === 'Private', note: 'Private and deemed universities.' },
+  { name: 'High Value (Under ₹2L)', metric: ROI, filter: c => c.totalFees < 2, note: 'Tuition under ₹2L a year, by median-to-fee ratio.' },
 ];
 
-function getMonogram(name: string): string {
-  const words = name.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/);
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return name.slice(0, 3).toUpperCase();
-}
+const METHODOLOGY: [string, string, string][] = [
+  ['Placement Outcomes', '30%', 'Audited placement %, median and average packages, recruiter tier distribution'],
+  ['Return on Investment (ROI)', '20%', 'Salary-to-tuition ratio and estimated payback period in months'],
+  ['Academic Quality & Faculty', '15%', 'Faculty-to-student ratio, PhD qualifications, citations and research grants'],
+  ['Audited Student Sentiment', '15%', 'Verified student reviews across academics, campus life, and peer quality'],
+  ['Reporting Transparency', '10%', 'Consistency of data submissions, RTI disclosures, and absence of misleading claims'],
+  ['Campus & Living Experience', '10%', 'Laboratory infrastructure, sports grounds, residential hostels, and library holdings'],
+];
 
 export default function RankingsPage() {
-  const [activeCategory, setActiveCategory] = useState('Overall Reality');
+  const reduce = useReducedMotion();
+  const [activeName, setActiveName] = useState(CATEGORIES[0].name);
   const [showMethodology, setShowMethodology] = useState(false);
+  const cat = CATEGORIES.find(c => c.name === activeName)!;
+  const m = cat.metric;
 
-  // Dynamic sorting based on category
-  const ranked = [...COLLEGES].sort((a, b) => {
-    if (activeCategory === 'Highest ROI') return (b.medianPackage / b.totalFees) - (a.medianPackage / a.totalFees);
-    if (activeCategory === 'Placement Power') return b.placementPercent - a.placementPercent;
-    if (activeCategory === 'High Value (Under ₹2L)') return a.totalFees - b.totalFees;
-    return b.realityScore - a.realityScore;
-  });
+  const ranked = COLLEGES.filter(c => (cat.filter ? cat.filter(c) : true)).sort((a, b) =>
+    m.lowerIsBetter ? m.value(a) - m.value(b) : m.value(b) - m.value(a),
+  );
+  const rankedIds = new Set(ranked.map(c => c.id));
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
-      {/* Header Banner — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-12 pb-14 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <PageHeader
+        label="Rankings · demo dataset"
+        title={<>Rankings that move<br className="hidden sm:block" /> with your priorities.</>}
+        description="Pick what matters. The list re-orders itself, and every position is backed by a number you can see."
+        actions={
+          <button
+            onClick={() => setShowMethodology(true)}
+            className="h-10 px-4 rounded-xl border border-line bg-surface text-sm inline-flex items-center gap-2 hover:border-ink-2 transition-colors cursor-pointer"
+          >
+            <Info size={15} /> Methodology & weights
+          </button>
+        }
+      />
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-3">
-                <Trophy size={13} className="text-amber-400" />
-                Verified Institutional Benchmarks
-              </div>
-              <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-[-0.03em] leading-tight">
-                National College Reality Rankings
-              </h1>
-              <p className="mt-2 text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
-                Ranked using 100% verified placement audits, genuine salary RTI records, fee-to-compensation ratios, and audited student sentiment.
-              </p>
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-10">
+        {/* Categories */}
+        <div role="tablist" aria-label="Ranking category" className="flex gap-1 overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
+          {CATEGORIES.map(c => (
+            <button
+              key={c.name}
+              role="tab"
+              aria-selected={c.name === activeName}
+              onClick={() => setActiveName(c.name)}
+              className={cn(
+                'relative h-10 px-4 rounded-lg text-[13.5px] whitespace-nowrap transition-colors cursor-pointer',
+                c.name === activeName ? 'text-paper' : 'text-ink-2 hover:bg-surface',
+              )}
+            >
+              {c.name === activeName && (
+                <motion.span layoutId="rank-cat" className="absolute inset-0 rounded-lg bg-ink" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
+              )}
+              <span className="relative">{c.name}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* List */}
+          <div className="lg:col-span-8">
+            <div className="flex items-baseline justify-between gap-4 pb-3 border-b border-ink">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.p key={cat.name} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="text-sm text-muted">
+                  {cat.note}
+                </motion.p>
+              </AnimatePresence>
+              <span className="label shrink-0">{m.label}</span>
             </div>
 
-            <button
-              onClick={() => setShowMethodology(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-bold transition-all self-start md:self-auto"
-            >
-              <Info size={14} className="text-blue-400" />
-              Ranking Methodology & Weights
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        {/* Category selector pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
-          {CATEGORIES.map(cat => {
-            const isActive = activeCategory === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                  isActive
-                    ? 'bg-[#0B1F3A] text-white shadow-sm'
-                    : 'bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 hover:border-slate-300 shadow-2xs'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Rankings Table Card */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden">
-          {/* Table Header */}
-          <div className="grid grid-cols-12 px-6 py-3.5 bg-slate-50/80 border-b border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-            <div className="col-span-1 text-center">Rank</div>
-            <div className="col-span-5">Institution</div>
-            <div className="col-span-2 text-center">Reality Score</div>
-            <div className="col-span-1 text-center">Rating</div>
-            <div className="col-span-1 text-center">Placed</div>
-            <div className="col-span-1 text-right">Median</div>
-            <div className="col-span-1 text-right">Tuition/Yr</div>
-          </div>
-
-          {/* Table Rows */}
-          <div className="divide-y divide-slate-100">
-            {ranked.map((college, i) => {
-              const isTop3 = i < 3;
-              const rankNumber = i + 1;
-              const formattedRank = rankNumber < 10 ? `0${rankNumber}` : `${rankNumber}`;
-
-              return (
-                <motion.div
-                  key={college.id}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03 }}
-                  className="grid grid-cols-12 px-6 py-4.5 hover:bg-blue-50/30 transition-colors items-center group"
-                >
-                  {/* Rank Badge */}
-                  <div className="col-span-1 flex justify-center">
-                    <span
-                      className={`inline-flex items-center justify-center font-display font-extrabold text-xs px-2.5 py-1 rounded-lg ${
-                        i === 0
-                          ? 'bg-amber-100/80 text-amber-900 border border-amber-300/80 font-black'
-                          : i === 1
-                          ? 'bg-slate-200 text-slate-800 border border-slate-300 font-bold'
-                          : i === 2
-                          ? 'bg-amber-50 text-amber-800 border border-amber-200 font-bold'
-                          : 'text-slate-400 font-bold'
-                      }`}
-                    >
-                      {formattedRank}
-                    </span>
-                  </div>
-
-                  {/* College Monogram & Name */}
-                  <div className="col-span-5 pr-4">
-                    <Link
-                      href={`/colleges/${college.id}`}
-                      className="flex items-center gap-3.5 group/link"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B1F3A] to-[#1E3A8A] text-white font-display font-black text-xs flex items-center justify-center shrink-0 shadow-2xs group-hover/link:scale-105 transition-transform">
-                        {getMonogram(college.shortName)}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-display font-bold text-sm text-slate-900 group-hover/link:text-blue-600 transition-colors truncate">
-                            {college.shortName}
-                          </p>
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
-                            {college.type}
+            <LayoutGroup>
+              <ol>
+                <AnimatePresence initial={false} mode="popLayout">
+                  {ranked.map((c, i) => {
+                    const v = m.value(c);
+                    const nirf = c.rankings.find(r => r.body === 'NIRF');
+                    return (
+                      <motion.li
+                        key={c.id}
+                        layout={reduce ? false : 'position'}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 12, transition: { duration: 0.15 } }}
+                        transition={{ layout: { type: 'spring', stiffness: 360, damping: 34 }, duration: 0.3 }}
+                        className="group relative border-b border-line hover:bg-surface transition-colors"
+                      >
+                        <div className="grid grid-cols-[2.75rem_1fr_auto] sm:grid-cols-[3.5rem_1fr_10rem_5.5rem_auto] items-center gap-3 sm:gap-5 py-4 px-1 sm:px-3">
+                          <span className={cn('font-display text-2xl sm:text-3xl font-semibold tracking-[-0.03em] nums', i === 0 ? 'text-accent' : 'text-ink/30')}>
+                            <AnimatedNumber value={i + 1} prefix={i + 1 < 10 ? '0' : ''} duration={0.35} />
+                          </span>
+                          <Link href={`/colleges/${c.id}`} className="min-w-0 flex items-center gap-3">
+                            <Monogram name={c.shortName} size="sm" tone="paper" className="hidden sm:inline-flex" />
+                            <span className="min-w-0">
+                              <span className="block font-medium text-[15px] sm:text-base group-hover:text-accent transition-colors truncate">{c.shortName}</span>
+                              <span className="block text-xs text-muted truncate">
+                                {c.city}, {c.state}
+                                {nirf ? ` · NIRF #${nirf.rank} ${nirf.category}` : ''}
+                              </span>
+                            </span>
+                          </Link>
+                          <span className="hidden sm:block h-[5px] rounded-full bg-paper-2 overflow-hidden">
+                            <motion.span
+                              className={cn('block h-full rounded-full origin-left', i === 0 ? 'bg-accent' : 'bg-ink/75')}
+                              initial={false}
+                              animate={{ scaleX: m.lowerIsBetter ? Math.max(0.06, 1 - v / m.max) : Math.min(1, v / m.max) }}
+                              transition={{ duration: 0.55, ease: EASE_OUT }}
+                            />
+                          </span>
+                          <span className="font-mono text-base sm:text-lg font-semibold nums text-right">
+                            {m.fmt(v)}
+                          </span>
+                          <span className="hidden sm:flex items-center gap-2">
+                            <SaveButton collegeId={c.id} collegeName={c.shortName} />
+                            <Link
+                              href={`/colleges/${c.id}`}
+                              aria-label={`View ${c.shortName}`}
+                              className="h-9 w-9 rounded-lg bg-ink text-paper inline-flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
+                            >
+                              <ArrowUpRight size={15} />
+                            </Link>
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-400 truncate">
-                          {college.city}, {college.state}
-                          {college.rankings.find(r => r.body === 'NIRF')
-                            ? ` · NIRF #${college.rankings.find(r => r.body === 'NIRF')?.rank}`
-                            : ''}
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
+                        <div className="sm:hidden flex items-center gap-4 px-1 pb-4 -mt-1 pl-[3.5rem] text-xs text-muted nums">
+                          <span>Score {c.realityScore}</span>
+                          <span>{c.placementPercent}% placed</span>
+                          <span>₹{c.medianPackage}L median</span>
+                        </div>
+                      </motion.li>
+                    );
+                  })}
+                </AnimatePresence>
+              </ol>
+            </LayoutGroup>
 
-                  {/* Reality Score */}
-                  <div className="col-span-2 text-center">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700">
-                      <ShieldCheck size={13} className="text-emerald-600" />
-                      <span className="font-display font-black text-xs tracking-tight">{college.realityScore}</span>
-                      <span className="text-[10px] text-emerald-600 font-medium">/ 100</span>
-                    </div>
-                  </div>
-
-                  {/* Rating */}
-                  <div className="col-span-1 text-center">
-                    <div className="inline-flex items-center gap-1 text-xs font-bold text-slate-800">
-                      <Star size={12} className="text-amber-500 fill-amber-500" />
-                      <span>{college.studentRating}</span>
-                    </div>
-                  </div>
-
-                  {/* Placed */}
-                  <div className="col-span-1 text-center">
-                    <span className="font-display font-bold text-xs text-slate-800">
-                      {college.placementPercent}%
-                    </span>
-                  </div>
-
-                  {/* Median Package */}
-                  <div className="col-span-1 text-right">
-                    <span className="font-display font-extrabold text-xs text-[#0B1F3A]">
-                      {formatPackage(college.medianPackage)}
-                    </span>
-                  </div>
-
-                  {/* Fees */}
-                  <div className="col-span-1 text-right">
-                    <span className="text-xs font-semibold text-slate-600">
-                      ₹{college.totalFees}L
-                    </span>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {ranked.length === 0 && (
+              <p className="py-12 text-muted">No colleges in the demo dataset fit this category yet.</p>
+            )}
           </div>
+
+          {/* Secondary visual: ROI vs placement */}
+          <aside className="lg:col-span-4">
+            <div className="lg:sticky lg:top-24 rounded-[22px] border border-line bg-surface p-6">
+              <p className="label">Where each college sits</p>
+              <p className="mt-1 font-display text-xl font-semibold tracking-[-0.02em]">Placement vs. median-to-fee ratio</p>
+              <ScatterPlot highlight={rankedIds} leader={ranked[0]?.id} />
+              <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t border-line nums">
+                <div>
+                  <p className="label">In this view</p>
+                  <p className="font-display text-3xl font-semibold"><AnimatedNumber value={ranked.length} /></p>
+                </div>
+                <div>
+                  <p className="label">Avg. placement</p>
+                  <p className="font-display text-3xl font-semibold">
+                    <AnimatedNumber value={ranked.length ? ranked.reduce((s, c) => s + c.placementPercent, 0) / ranked.length : 0} suffix="%" />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
 
-      {/* Methodology Modal */}
+      {/* Methodology */}
       <AnimatePresence>
         {showMethodology && (
           <>
@@ -223,63 +210,47 @@ export default function RankingsPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowMethodology(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50"
+              className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-[80]"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 border border-slate-200"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Reality Score methodology"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              transition={{ duration: 0.25, ease: EASE_OUT }}
+              className="fixed inset-x-4 top-[10vh] sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-[560px] z-[81] bg-paper rounded-[22px] border border-line p-6 sm:p-8 shadow-2xl max-h-[80vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                    <Sparkles size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-bold text-slate-900 text-base">Reality Score Methodology</h3>
-                    <p className="text-[11px] text-slate-400">Weighted scientific criteria</p>
-                  </div>
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="label">Methodology</p>
+                  <h2 className="font-display text-2xl font-semibold tracking-[-0.02em] mt-1">How the Reality Score is weighted</h2>
                 </div>
-                <button
-                  onClick={() => setShowMethodology(false)}
-                  className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                >
+                <button onClick={() => setShowMethodology(false)} aria-label="Close" className="w-9 h-9 rounded-lg border border-line flex items-center justify-center hover:border-ink-2 cursor-pointer">
                   <X size={16} />
                 </button>
               </div>
-
-              <p className="text-xs text-slate-600 mt-4 mb-4 leading-relaxed">
-                Rankings are algorithmically computed using verified data sources including NIRF submissions, mandatory AICTE disclosures, audited placement reports, and authenticated student review sentiments.
-              </p>
-
-              <div className="space-y-2.5">
-                {[
-                  ['Placement Outcomes', '30%', 'Audited placement %, median and average packages, recruiter tier distribution'],
-                  ['Return on Investment (ROI)', '20%', 'Salary-to-tuition ratio and estimated payback period in months'],
-                  ['Academic Quality & Faculty', '15%', 'Faculty-to-student ratio, PhD qualifications, citations and research grants'],
-                  ['Audited Student Sentiment', '15%', 'Verified student reviews across academics, campus life, and peer quality'],
-                  ['Reporting Transparency', '10%', 'Consistency of data submissions, RTI disclosures, and absence of misleading claims'],
-                  ['Campus & Living Experience', '10%', 'Laboratory infrastructure, sports grounds, residential hostels, and library holdings'],
-                ].map(([cat, weight, desc]) => (
-                  <div key={cat} className="flex gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span className="font-display font-extrabold text-xs text-blue-600 w-10 shrink-0">{weight}</span>
-                    <div>
-                      <p className="text-xs font-bold text-slate-900">{cat}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">{desc}</p>
+              <ul className="mt-6 space-y-4">
+                {METHODOLOGY.map(([name, weight, desc]) => (
+                  <li key={name}>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span className="font-medium">{name}</span>
+                      <span className="font-mono text-sm nums">{weight}</span>
                     </div>
-                  </div>
+                    <div className="mt-1.5 h-1.5 rounded-full bg-paper-2 overflow-hidden">
+                      <motion.div
+                        className="h-full bg-accent origin-left rounded-full"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: parseInt(weight, 10) / 30 }}
+                        transition={{ duration: 0.5, ease: EASE_OUT }}
+                      />
+                    </div>
+                    <p className="mt-1.5 text-xs text-muted">{desc}</p>
+                  </li>
                 ))}
-              </div>
-
-              <div className="mt-5 pt-3 border-t border-slate-100 flex justify-end">
-                <button
-                  onClick={() => setShowMethodology(false)}
-                  className="px-4 py-2 bg-[#0B1F3A] text-white rounded-xl text-xs font-bold hover:bg-blue-900 transition-colors"
-                >
-                  Close & Continue
-                </button>
-              </div>
+              </ul>
+              <p className="mt-6 text-xs text-muted">Prototype: scores shown are demonstration values.</p>
             </motion.div>
           </>
         )}
@@ -287,5 +258,38 @@ export default function RankingsPage() {
 
       <Footer />
     </div>
+  );
+}
+
+function ScatterPlot({ highlight, leader }: { highlight: Set<string>; leader?: string }) {
+  const W = 300;
+  const H = 220;
+  const pad = 28;
+  const x = (roi: number) => pad + (roi / 26) * (W - pad - 8);
+  const y = (pl: number) => H - pad - ((pl - 75) / 25) * (H - pad - 10);
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="mt-5 w-full h-auto" role="img" aria-label="Scatter plot of placement rate against median-to-fee ratio">
+      {[80, 90, 100].map(p => (
+        <g key={p}>
+          <line x1={pad} x2={W - 8} y1={y(p)} y2={y(p)} stroke="#e3e0d8" />
+          <text x={pad - 6} y={y(p) + 3} textAnchor="end" className="fill-[#9a9ea6] font-mono text-[9px]">{p}%</text>
+        </g>
+      ))}
+      {[0, 10, 20].map(r => (
+        <text key={r} x={x(r)} y={H - 8} textAnchor="middle" className="fill-[#9a9ea6] font-mono text-[9px]">{r}×</text>
+      ))}
+      {COLLEGES.map(c => {
+        const on = highlight.has(c.id);
+        const lead = c.id === leader;
+        return (
+          <motion.g key={c.id} initial={false} animate={{ opacity: on ? 1 : 0.25 }} transition={{ duration: 0.3 }}>
+            <circle cx={x(roiOf(c))} cy={y(c.placementPercent)} r={lead ? 7 : 5} className={lead ? 'fill-[#2b4fe0]' : 'fill-[#121417]'} />
+            <text x={x(roiOf(c)) + (roiOf(c) > 18 ? -10 : 10)} y={y(c.placementPercent) + 3} textAnchor={roiOf(c) > 18 ? 'end' : 'start'} className="fill-[#2e333a] text-[9.5px]">
+              {c.shortName.split(' ')[0]}
+            </text>
+          </motion.g>
+        );
+      })}
+    </svg>
   );
 }

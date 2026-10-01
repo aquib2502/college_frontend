@@ -26,11 +26,11 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
   const paybackRatio = (course.medianPackage / (fourYearTuition || 1)).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
       {/* Header Banner */}
-      <div className="bg-[#0f1b2d] text-white pt-8 pb-12 px-4 sm:px-6">
+      <div className="bg-ink text-white pt-8 pb-12 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-4">
@@ -71,7 +71,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
 
               <Link
                 href={`/colleges?course=${encodeURIComponent(course.shortCode)}`}
-                className="w-full py-2.5 px-4 bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md"
+                className="w-full py-2.5 px-4 bg-accent hover:bg-accent text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md"
               >
                 View {course.offeringCollegesCount} Colleges <ArrowUpRight size={14} />
               </Link>
@@ -131,13 +131,13 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             {/* Key Highlights */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
               <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Sparkles size={16} className="text-[#1a56db]" />
+                <Sparkles size={16} className="text-accent" />
                 Why Pursue {course.shortCode}?
               </h2>
               <div className="space-y-3">
                 {course.keyHighlights.map((highlight, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-blue-50/50 border border-blue-100 rounded-xl">
-                    <CheckCircle2 size={16} className="text-[#1a56db] shrink-0 mt-0.5" />
+                    <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
                     <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
                       {highlight}
                     </p>
@@ -164,7 +164,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {sem.subjects.map((sub, sIdx) => (
                         <div key={sIdx} className="flex items-center gap-2 text-xs text-slate-600 bg-white p-2 rounded-lg border border-slate-100">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#1a56db]"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
                           {sub}
                         </div>
                       ))}
@@ -181,7 +181,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                   <Building size={16} className="text-emerald-600" />
                   Top Institutes for {course.shortCode}
                 </h2>
-                <Link href="/colleges" className="text-xs text-[#1a56db] font-semibold hover:underline">
+                <Link href="/colleges" className="text-xs text-accent font-semibold hover:underline">
                   Compare all →
                 </Link>
               </div>
@@ -200,7 +200,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                       </div>
                       <Link
                         href={`/colleges/${col.id}`}
-                        className="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-[#1a56db] rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+                        className="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-accent rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
                       >
                         Profile <ChevronRight size={12} />
                       </Link>
@@ -216,7 +216,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             {/* Eligibility & Exams Card */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <GraduationCap size={16} className="text-[#1a56db]" />
+                <GraduationCap size={16} className="text-accent" />
                 Admission & Eligibility
               </h3>
               <div>
@@ -233,7 +233,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                     <Link
                       key={i}
                       href="/exams"
-                      className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-[#1a56db] rounded-md text-xs font-semibold transition-colors"
+                      className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-accent rounded-md text-xs font-semibold transition-colors"
                     >
                       {exam}
                     </Link>
@@ -268,7 +268,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             {/* ROI Snapshot */}
-            <div className="bg-gradient-to-br from-[#0f1b2d] to-[#1a2f4e] text-white rounded-2xl p-5 shadow-md">
+            <div className="bg-gradient-to-br from-ink to-ink-2 text-white rounded-2xl p-5 shadow-md">
               <h3 className="font-bold text-sm mb-1 flex items-center gap-2">
                 <TrendingUp size={15} className="text-emerald-400" />
                 Return on Investment

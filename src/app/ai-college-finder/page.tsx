@@ -106,11 +106,11 @@ function AIFinderContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
       {/* Header — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-12 pb-16 px-4 overflow-hidden">
+      <div className="relative bg-ink text-white pt-12 pb-16 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -144,7 +144,7 @@ function AIFinderContent() {
                 <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 shadow-xl shadow-blue-950/5 relative overflow-hidden">
                   <div className="flex items-center justify-between gap-2 mb-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-accent flex items-center justify-center">
                         <Bot size={18} />
                       </div>
                       <span className="font-display font-bold text-slate-900 text-sm">Natural Language Profile Prompt</span>
@@ -168,7 +168,7 @@ function AIFinderContent() {
                     <button
                       type="submit"
                       disabled={!query.trim()}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0B1F3A] hover:bg-blue-900 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-ink hover:bg-blue-900 disabled:opacity-40 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
                     >
                       <Sparkles size={14} className="text-blue-400" />
                       Generate Match Analysis
@@ -185,10 +185,10 @@ function AIFinderContent() {
                     <button
                       key={i}
                       onClick={() => { setQuery(prompt); textareaRef.current?.focus(); }}
-                      className="w-full text-left p-3.5 bg-white border border-slate-200/80 rounded-xl text-xs sm:text-sm font-medium text-slate-750 hover:border-blue-300 hover:text-blue-600 transition-all flex items-center justify-between group shadow-2xs"
+                      className="w-full text-left p-3.5 bg-white border border-slate-200/80 rounded-xl text-xs sm:text-sm font-medium text-slate-750 hover:border-blue-300 hover:text-accent transition-all flex items-center justify-between group shadow-2xs"
                     >
                       <span className="leading-snug">{prompt}</span>
-                      <ChevronRight size={15} className="text-slate-300 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-3" />
+                      <ChevronRight size={15} className="text-slate-300 group-hover:text-accent group-hover:translate-x-0.5 transition-all shrink-0 ml-3" />
                     </button>
                   ))}
                 </div>
@@ -208,7 +208,7 @@ function AIFinderContent() {
               <div className="relative mb-8">
                 <div className="w-18 h-18 rounded-full border-3 border-blue-100 border-t-blue-600 animate-spin" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Bot size={26} className="text-blue-600" />
+                  <Bot size={26} className="text-accent" />
                 </div>
               </div>
 
@@ -297,7 +297,7 @@ function AIFinderContent() {
                   ].map(({ icon: Icon, label, value }) => (
                     <div key={label} className="bg-slate-50/80 rounded-xl p-3 border border-slate-100">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <Icon size={12} className="text-blue-600" />
+                        <Icon size={12} className="text-accent" />
                         <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{label}</span>
                       </div>
                       <p className="text-xs font-extrabold text-slate-900 truncate">{value}</p>
@@ -310,7 +310,7 @@ function AIFinderContent() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="font-display font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight">
-                    Found <span className="text-blue-600">{results.length} Recommended Colleges</span>
+                    Found <span className="text-accent">{results.length} Recommended Colleges</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-0.5">Ranked by predictive fit algorithm & admissions probability</p>
                 </div>
@@ -375,7 +375,7 @@ function AIFinderContent() {
 
 export default function AICollegeFinderPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F8F9FB]"><Navbar /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-paper"><Navbar /></div>}>
       <AIFinderContent />
     </Suspense>
   );

@@ -38,11 +38,11 @@ export default function SavedCollegesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] text-slate-800">
+    <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
       {/* Header */}
-      <section className="bg-[#0f1b2d] text-white pt-10 pb-14 px-4 sm:px-6">
+      <section className="bg-ink text-white pt-10 pb-14 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -69,7 +69,7 @@ export default function SavedCollegesPage() {
                 </button>
                 <Link
                   href="/compare"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1a56db] hover:bg-blue-600 text-xs font-semibold text-white shadow-md transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent hover:bg-accent text-xs font-semibold text-white shadow-md transition-colors"
                 >
                   <GitCompare size={14} />
                   Compare All in Matrix →
@@ -84,7 +84,7 @@ export default function SavedCollegesPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {savedList.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-3xl p-16 text-center max-w-xl mx-auto my-12 shadow-sm">
-            <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#1a56db] flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 text-accent flex items-center justify-center mx-auto mb-4">
               <Bookmark size={28} />
             </div>
             <h2 className="text-xl font-bold text-slate-900">Your Shortlist is Empty</h2>
@@ -98,7 +98,7 @@ export default function SavedCollegesPage() {
                   toggleSave('vjti');
                   toggleSave('bits-pilani');
                 }}
-                className="px-4 py-2 bg-[#1a56db] hover:bg-blue-600 text-white text-xs font-semibold rounded-xl shadow-sm"
+                className="px-4 py-2 bg-accent hover:bg-accent text-white text-xs font-semibold rounded-xl shadow-sm"
               >
                 Add Top 3 Recommended Colleges
               </button>
@@ -166,7 +166,7 @@ export default function SavedCollegesPage() {
                             <div>
                               <Link
                                 href={`/colleges/${college.id}`}
-                                className="font-bold text-slate-900 text-sm hover:text-[#1a56db] transition-colors leading-tight line-clamp-1"
+                                className="font-bold text-slate-900 text-sm hover:text-accent transition-colors leading-tight line-clamp-1"
                               >
                                 {college.name}
                               </Link>
@@ -187,7 +187,7 @@ export default function SavedCollegesPage() {
                         <div className="grid grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl mb-4 text-center">
                           <div>
                             <span className="text-[10px] text-slate-400 block font-medium">AI Match</span>
-                            <span className="text-sm font-bold text-blue-600">{match.matchPercent}%</span>
+                            <span className="text-sm font-bold text-accent">{match.matchPercent}%</span>
                           </div>
                           <div>
                             <span className="text-[10px] text-slate-400 block font-medium">Reality Score</span>
@@ -265,7 +265,7 @@ export default function SavedCollegesPage() {
 
                         <button
                           onClick={() => setApplyModalCollege(college)}
-                          className="w-full py-2.5 bg-[#1a56db] hover:bg-blue-600 text-white text-xs font-bold rounded-xl shadow-sm transition-colors flex items-center justify-center gap-1.5"
+                          className="w-full py-2.5 bg-accent hover:bg-accent text-white text-xs font-bold rounded-xl shadow-sm transition-colors flex items-center justify-center gap-1.5"
                         >
                           <Send size={13} />
                           Simulate Application
@@ -303,14 +303,14 @@ export default function SavedCollegesPage() {
                               <div className="flex items-center gap-2.5">
                                 <span className="text-xl">{college.logo}</span>
                                 <div>
-                                  <Link href={`/colleges/${college.id}`} className="font-bold text-slate-900 hover:text-[#1a56db]">
+                                  <Link href={`/colleges/${college.id}`} className="font-bold text-slate-900 hover:text-accent">
                                     {college.shortName}
                                   </Link>
                                   <p className="text-[11px] text-slate-400">{college.city}</p>
                                 </div>
                               </div>
                             </td>
-                            <td className="py-3.5 px-4 font-bold text-blue-600">{match.matchPercent}%</td>
+                            <td className="py-3.5 px-4 font-bold text-accent">{match.matchPercent}%</td>
                             <td className="py-3.5 px-4">
                               <span className={`font-bold ${getScoreColor(college.realityScore)}`}>
                                 {college.realityScore}/100
@@ -328,7 +328,7 @@ export default function SavedCollegesPage() {
                               <div className="flex items-center justify-end gap-2">
                                 <button
                                   onClick={() => setApplyModalCollege(college)}
-                                  className="px-2.5 py-1 bg-[#1a56db] text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors"
+                                  className="px-2.5 py-1 bg-accent text-white font-semibold rounded-lg hover:bg-accent transition-colors"
                                 >
                                   Apply
                                 </button>
@@ -394,7 +394,7 @@ export default function SavedCollegesPage() {
                   <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
                     Application reference <strong>#APP-{applyModalCollege.id.toUpperCase()}-2026</strong> has been registered with simulated credentials.
                   </p>
-                  <div className="inline-block px-3 py-1 bg-blue-50 text-[#1a56db] text-xs font-semibold rounded-lg">
+                  <div className="inline-block px-3 py-1 bg-blue-50 text-accent text-xs font-semibold rounded-lg">
                     Check Student Dashboard for simulated status tracking
                   </div>
                 </div>
@@ -452,7 +452,7 @@ export default function SavedCollegesPage() {
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 text-xs font-bold bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl shadow-md flex items-center gap-1.5"
+                      className="px-5 py-2 text-xs font-bold bg-accent hover:bg-accent text-white rounded-xl shadow-md flex items-center gap-1.5"
                     >
                       <Send size={13} />
                       Simulate Direct Apply

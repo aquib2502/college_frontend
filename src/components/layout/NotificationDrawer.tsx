@@ -124,7 +124,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
             {/* Drawer Header */}
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#1a56db] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-accent flex items-center justify-center">
                   <Bell size={16} />
                 </div>
                 <div>
@@ -139,7 +139,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-xs text-[#1a56db] hover:underline font-semibold"
+                    className="text-xs text-accent hover:underline font-semibold"
                   >
                     Mark all read
                   </button>
@@ -166,7 +166,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
               <button
                 onClick={() => setFilter('unread')}
                 className={`px-3 py-1 rounded-lg font-medium transition-colors ${
-                  filter === 'unread' ? 'bg-[#1a56db] text-white' : 'text-slate-500 hover:bg-slate-100'
+                  filter === 'unread' ? 'bg-accent text-white' : 'text-slate-500 hover:bg-slate-100'
                 }`}
               >
                 Unread ({unreadCount})
@@ -206,7 +206,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
                           <Link
                             href={item.link}
                             onClick={onClose}
-                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#1a56db] mt-2 hover:underline"
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-accent mt-2 hover:underline"
                           >
                             <span>Inspect details</span>
                             <ArrowUpRight size={11} />

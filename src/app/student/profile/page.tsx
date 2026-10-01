@@ -84,11 +84,11 @@ export default function StudentProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] text-slate-800">
+    <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
       {/* Header */}
-      <section className="bg-[#0f1b2d] text-white pt-10 pb-16 px-4 sm:px-6">
+      <section className="bg-ink text-white pt-10 pb-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -168,7 +168,7 @@ export default function StudentProfilePage() {
                       type="text"
                       value={formData.fullName}
                       onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#1a56db]"
+                      className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-accent"
                     />
                   </div>
 
@@ -265,7 +265,7 @@ export default function StudentProfilePage() {
                         onClick={() => setFormData({ ...formData, desiredDegree: deg })}
                         className={`p-3 rounded-xl border text-xs font-semibold text-left transition-all ${
                           formData.desiredDegree === deg
-                            ? 'bg-blue-50 border-blue-400 text-[#1a56db]'
+                            ? 'bg-blue-50 border-blue-400 text-accent'
                             : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                         }`}
                       >
@@ -299,7 +299,7 @@ export default function StudentProfilePage() {
                           }`}
                         >
                           <span>{branch}</span>
-                          {isSelected && <Check size={14} className="text-[#1a56db]" />}
+                          {isSelected && <Check size={14} className="text-accent" />}
                         </button>
                       );
                     })}
@@ -321,7 +321,7 @@ export default function StudentProfilePage() {
                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200">
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-bold text-slate-700">Maximum Annual Tuition Budget</label>
-                    <span className="text-base font-extrabold text-[#1a56db]">₹{formData.maxAnnualBudget} Lakhs / year</span>
+                    <span className="text-base font-extrabold text-accent">₹{formData.maxAnnualBudget} Lakhs / year</span>
                   </div>
                   <input
                     type="range"
@@ -330,7 +330,7 @@ export default function StudentProfilePage() {
                     step="0.25"
                     value={formData.maxAnnualBudget}
                     onChange={e => setFormData({ ...formData, maxAnnualBudget: Number(e.target.value) })}
-                    className="w-full accent-[#1a56db] cursor-pointer"
+                    className="w-full accent-accent cursor-pointer"
                   />
                   <div className="flex justify-between text-[11px] text-slate-400 mt-1">
                     <span>Govt/Subsidized (&lt; ₹1L)</span>
@@ -371,7 +371,7 @@ export default function StudentProfilePage() {
                     type="checkbox"
                     checked={formData.hostelRequired}
                     onChange={e => setFormData({ ...formData, hostelRequired: e.target.checked })}
-                    className="w-5 h-5 accent-[#1a56db] rounded cursor-pointer"
+                    className="w-5 h-5 accent-accent rounded cursor-pointer"
                   />
                 </div>
               </motion.div>
@@ -429,7 +429,7 @@ export default function StudentProfilePage() {
                   <div>
                     <div className="flex justify-between text-xs font-bold mb-1">
                       <span>Campus Placement Performance</span>
-                      <span className="text-[#1a56db]">{formData.placementWeight}%</span>
+                      <span className="text-accent">{formData.placementWeight}%</span>
                     </div>
                     <input
                       type="range"
@@ -437,14 +437,14 @@ export default function StudentProfilePage() {
                       max="60"
                       value={formData.placementWeight}
                       onChange={e => setFormData({ ...formData, placementWeight: Number(e.target.value) })}
-                      className="w-full accent-[#1a56db]"
+                      className="w-full accent-accent"
                     />
                   </div>
 
                   <div>
                     <div className="flex justify-between text-xs font-bold mb-1">
                       <span>Financial ROI (Fees to Starting CTC Ratio)</span>
-                      <span className="text-[#1a56db]">{formData.roiWeight}%</span>
+                      <span className="text-accent">{formData.roiWeight}%</span>
                     </div>
                     <input
                       type="range"
@@ -452,14 +452,14 @@ export default function StudentProfilePage() {
                       max="50"
                       value={formData.roiWeight}
                       onChange={e => setFormData({ ...formData, roiWeight: Number(e.target.value) })}
-                      className="w-full accent-[#1a56db]"
+                      className="w-full accent-accent"
                     />
                   </div>
 
                   <div>
                     <div className="flex justify-between text-xs font-bold mb-1">
                       <span>Brand Prestige & NIRF Ranking</span>
-                      <span className="text-[#1a56db]">{formData.brandWeight}%</span>
+                      <span className="text-accent">{formData.brandWeight}%</span>
                     </div>
                     <input
                       type="range"
@@ -467,14 +467,14 @@ export default function StudentProfilePage() {
                       max="30"
                       value={formData.brandWeight}
                       onChange={e => setFormData({ ...formData, brandWeight: Number(e.target.value) })}
-                      className="w-full accent-[#1a56db]"
+                      className="w-full accent-accent"
                     />
                   </div>
 
                   <div>
                     <div className="flex justify-between text-xs font-bold mb-1">
                       <span>Campus Life & Verified Student Reviews</span>
-                      <span className="text-[#1a56db]">{formData.campusLifeWeight}%</span>
+                      <span className="text-accent">{formData.campusLifeWeight}%</span>
                     </div>
                     <input
                       type="range"
@@ -482,7 +482,7 @@ export default function StudentProfilePage() {
                       max="30"
                       value={formData.campusLifeWeight}
                       onChange={e => setFormData({ ...formData, campusLifeWeight: Number(e.target.value) })}
-                      className="w-full accent-[#1a56db]"
+                      className="w-full accent-accent"
                     />
                   </div>
                 </div>
@@ -504,7 +504,7 @@ export default function StudentProfilePage() {
                     </div>
                     <div className="p-2.5 bg-white rounded-xl border border-emerald-100 text-xs">
                       <strong className="block text-slate-800">BITS Pilani</strong>
-                      <span className="text-blue-600 font-bold">81% Personal Match</span>
+                      <span className="text-accent font-bold">81% Personal Match</span>
                     </div>
                   </div>
                 </div>
@@ -530,7 +530,7 @@ export default function StudentProfilePage() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(currentStep + 1)}
-                  className="flex items-center gap-1.5 px-5 py-2.5 bg-[#1a56db] hover:bg-blue-600 text-white text-xs font-bold rounded-xl shadow-md transition-colors"
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-accent hover:bg-accent text-white text-xs font-bold rounded-xl shadow-md transition-colors"
                 >
                   <span>Continue to Step {currentStep + 1}</span>
                   <ChevronRight size={14} />

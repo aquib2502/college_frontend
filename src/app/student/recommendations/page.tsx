@@ -24,11 +24,11 @@ export default function StudentRecommendationsPage() {
   })).sort((a, b) => b.match.matchPercent - a.match.matchPercent);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] text-slate-800">
+    <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
       {/* Header */}
-      <div className="bg-[#0f1b2d] text-white pt-10 pb-16 px-4 sm:px-6">
+      <div className="bg-ink text-white pt-10 pb-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
@@ -87,7 +87,7 @@ export default function StudentRecommendationsPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <Link href={`/colleges/${college.id}`} className="font-bold text-base text-slate-900 hover:text-[#1a56db]">
+                        <Link href={`/colleges/${college.id}`} className="font-bold text-base text-slate-900 hover:text-accent">
                           {college.name}
                         </Link>
                         {college.verified && (
@@ -135,7 +135,7 @@ export default function StudentRecommendationsPage() {
                     </div>
                     <div>
                       <p className="text-[10px] text-slate-400 font-semibold uppercase">Reality Score</p>
-                      <p className="text-2xl font-extrabold text-[#1a56db]">{college.realityScore}</p>
+                      <p className="text-2xl font-extrabold text-accent">{college.realityScore}</p>
                     </div>
                   </div>
 
@@ -173,7 +173,7 @@ export default function StudentRecommendationsPage() {
 
                     <Link
                       href={`/colleges/${college.id}`}
-                      className="px-4 py-2 bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                      className="px-4 py-2 bg-accent hover:bg-accent text-white rounded-xl text-xs font-bold transition-all shadow-sm"
                     >
                       View Details
                     </Link>

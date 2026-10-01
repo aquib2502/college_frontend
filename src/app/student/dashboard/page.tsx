@@ -29,11 +29,11 @@ export default function StudentDashboardPage() {
   const recommendedColleges = COLLEGES.filter(c => c.state === 'Maharashtra').slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
       {/* Dashboard Header — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-10 pb-12 px-4 sm:px-6 overflow-hidden">
+      <div className="relative bg-ink text-white pt-10 pb-12 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -55,7 +55,7 @@ export default function StudentDashboardPage() {
             <div className="flex items-center gap-3">
               <Link
                 href="/ai-college-finder"
-                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-deep text-white rounded-xl text-xs font-bold transition-all shadow-sm"
               >
                 <Sparkles size={14} className="text-blue-200" />
                 Launch AI Finder
@@ -119,7 +119,7 @@ export default function StudentDashboardPage() {
             <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-bold text-slate-900 text-sm">Your Current Preferences</h2>
-                <button className="text-xs text-[#1a56db] hover:underline flex items-center gap-1">
+                <button className="text-xs text-accent hover:underline flex items-center gap-1">
                   <Edit2 size={11} /> Edit
                 </button>
               </div>
@@ -156,7 +156,7 @@ export default function StudentDashboardPage() {
                     onClick={() => setActiveTab(tab.key as typeof activeTab)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-semibold border-b-2 transition-all ${
                       activeTab === tab.key
-                        ? 'border-[#1a56db] text-[#1a56db]'
+                        ? 'border-accent text-accent'
                         : 'border-transparent text-slate-400 hover:text-slate-600'
                     }`}
                   >
@@ -183,7 +183,7 @@ export default function StudentDashboardPage() {
                               {college.logo}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-sm text-slate-800 group-hover:text-[#1a56db] transition-colors">
+                              <p className="font-semibold text-sm text-slate-800 group-hover:text-accent transition-colors">
                                 {college.shortName}
                               </p>
                               <div className="flex items-center gap-2 mt-0.5">
@@ -204,7 +204,7 @@ export default function StudentDashboardPage() {
                         </Link>
                       );
                     })}
-                    <Link href="/ai-college-finder" className="flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-[#1a56db] hover:bg-blue-50 rounded-xl transition-colors">
+                    <Link href="/ai-college-finder" className="flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-accent hover:bg-blue-50 rounded-xl transition-colors">
                       Get more recommendations <ChevronRight size={14} />
                     </Link>
                   </div>
@@ -216,7 +216,7 @@ export default function StudentDashboardPage() {
                       <div className="text-center py-8">
                         <Bookmark size={32} className="text-slate-200 mx-auto mb-3" />
                         <p className="text-sm text-slate-400 mb-3">No saved colleges yet</p>
-                        <Link href="/colleges" className="text-sm text-[#1a56db] font-medium hover:underline">Browse Colleges →</Link>
+                        <Link href="/colleges" className="text-sm text-accent font-medium hover:underline">Browse Colleges →</Link>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -252,10 +252,10 @@ export default function StudentDashboardPage() {
                           <p className="font-semibold text-sm text-slate-800">{college.shortName}</p>
                           <p className="text-[11px] text-slate-400">{college.realityScore} Reality Score</p>
                         </div>
-                        <Link href="/compare" className="text-xs text-[#1a56db] font-medium hover:underline">View →</Link>
+                        <Link href="/compare" className="text-xs text-accent font-medium hover:underline">View →</Link>
                       </div>
                     ))}
-                    <Link href="/compare" className="flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-[#1a56db] hover:bg-blue-50 rounded-xl transition-colors">
+                    <Link href="/compare" className="flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-accent hover:bg-blue-50 rounded-xl transition-colors">
                       Open Full Comparison <ChevronRight size={14} />
                     </Link>
                   </div>
@@ -289,7 +289,7 @@ export default function StudentDashboardPage() {
                   <Clock size={14} className="text-red-500" />
                   Upcoming Deadlines
                 </h3>
-                <Link href="/student/deadlines" className="text-xs text-[#1a56db] hover:underline">All →</Link>
+                <Link href="/student/deadlines" className="text-xs text-accent hover:underline">All →</Link>
               </div>
               <div className="space-y-3">
                 {ADMISSION_UPDATES.slice(0, 3).map((u, i) => (
@@ -327,7 +327,7 @@ export default function StudentDashboardPage() {
                     href={action.href}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
                   >
-                    <action.icon size={15} className="text-slate-400 group-hover:text-[#1a56db] transition-colors" />
+                    <action.icon size={15} className="text-slate-400 group-hover:text-accent transition-colors" />
                     <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">{action.label}</span>
                     <ChevronRight size={13} className="text-slate-300 ml-auto" />
                   </Link>

@@ -58,10 +58,10 @@ export default function StudentQuestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] text-slate-800">
+    <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
-      <div className="bg-[#0f1b2d] text-white pt-10 pb-16 px-4 sm:px-6">
+      <div className="bg-ink text-white pt-10 pb-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
             <Link href="/" className="hover:text-slate-200">Home</Link>
@@ -87,7 +87,7 @@ export default function StudentQuestionsPage() {
 
             <button
               onClick={() => setModalOpen(true)}
-              className="px-4 py-2.5 bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all shrink-0"
+              className="px-4 py-2.5 bg-accent hover:bg-accent text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all shrink-0"
             >
               <Plus size={14} /> Ask a Question
             </button>
@@ -103,7 +103,7 @@ export default function StudentQuestionsPage() {
             {questions.map(q => (
               <div key={q.id} className="p-4 border border-slate-200 rounded-xl bg-slate-50/50 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded bg-blue-50 text-[#1a56db] text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded bg-blue-50 text-accent text-[10px] font-bold">
                     {q.college}
                   </span>
                   <span className="text-[11px] text-slate-400">{q.askedDate}</span>
@@ -120,7 +120,7 @@ export default function StudentQuestionsPage() {
                 </div>
 
                 <div className="text-[11px] text-slate-400 pt-1 flex items-center gap-1">
-                  <ThumbsUp size={11} className="text-[#1a56db]" /> {q.upvotes} students found this helpful
+                  <ThumbsUp size={11} className="text-accent" /> {q.upvotes} students found this helpful
                 </div>
               </div>
             ))}
@@ -165,7 +165,7 @@ export default function StudentQuestionsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#1a56db] text-white rounded-xl font-bold"
+                  className="px-4 py-2 bg-accent text-white rounded-xl font-bold"
                 >
                   Broadcast Question
                 </button>

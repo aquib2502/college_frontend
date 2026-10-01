@@ -18,6 +18,7 @@ import {
   BarElement, Title, Tooltip, Legend, Filler,
 } from 'chart.js';
 import Navbar from '@/components/layout/Navbar';
+import SaveButton from '@/components/saved/SaveButton';
 import Footer from '@/components/layout/Footer';
 import { getCollegeById, simulateAIMatch, STUDENT_PROFILE, College } from '@/lib/mockData';
 import { formatPackage, getScoreColor, getProbabilityLabel } from '@/lib/utils';
@@ -95,7 +96,7 @@ function RealityScoreSection({ college }: { college: College }) {
         <h3 className="font-bold text-slate-900">Reality Score</h3>
         <button
           onClick={() => setShowExplanation(true)}
-          className="text-xs text-[#1a56db] hover:underline flex items-center gap-1"
+          className="text-xs text-accent hover:underline flex items-center gap-1"
         >
           <Info size={12} />
           How is this calculated?
@@ -164,27 +165,27 @@ function RealityScoreSection({ college }: { college: College }) {
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span className="font-medium text-slate-700">Placement Performance (NIRF + Audit)</span>
-                  <span className="font-bold text-[#1a56db]">30%</span>
+                  <span className="font-bold text-accent">30%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span className="font-medium text-slate-700">Return on Investment (Median salary vs cost)</span>
-                  <span className="font-bold text-[#1a56db]">20%</span>
+                  <span className="font-bold text-accent">20%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span className="font-medium text-slate-700">Academics & Faculty Credentials</span>
-                  <span className="font-bold text-[#1a56db]">15%</span>
+                  <span className="font-bold text-accent">15%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span className="font-medium text-slate-700">Verified Student Satisfaction</span>
-                  <span className="font-bold text-[#1a56db]">15%</span>
+                  <span className="font-bold text-accent">15%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span className="font-medium text-slate-700">Data Transparency & Audit Integrity</span>
-                  <span className="font-bold text-[#1a56db]">10%</span>
+                  <span className="font-bold text-accent">10%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span className="font-medium text-slate-700">Campus Infrastructure</span>
-                  <span className="font-bold text-[#1a56db]">10%</span>
+                  <span className="font-bold text-accent">10%</span>
                 </div>
               </div>
               <p className="text-[11px] text-slate-400 italic">
@@ -331,8 +332,8 @@ function AdmissionTab({ college }: { college: College }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 bg-blue-50 border border-blue-100 rounded-xl">
-            <span className="text-[10px] text-blue-600 uppercase font-bold block">Primary Entrance Exam</span>
-            <span className="text-sm font-bold text-[#1a56db]">
+            <span className="text-[10px] text-accent uppercase font-bold block">Primary Entrance Exam</span>
+            <span className="text-sm font-bold text-accent">
               {college.courses[0]?.entranceExam || 'JEE Main / CET'}
             </span>
           </div>
@@ -352,7 +353,7 @@ function AdmissionTab({ college }: { college: College }) {
       {/* Step-by-step admission roadmap */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <h3 className="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
-          <Calendar size={16} className="text-[#1a56db]" />
+          <Calendar size={16} className="text-accent" />
           Key Admission Stages (2026-27)
         </h3>
 
@@ -365,7 +366,7 @@ function AdmissionTab({ college }: { college: College }) {
             { stage: 'Stage 5', title: 'Campus Physical Reporting', dates: 'August 2026', desc: 'Physical hostel allotment, identity verification, and commencement of academic semester.' },
           ].map((item, idx) => (
             <div key={idx} className="flex items-start gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="px-2 py-0.5 rounded bg-blue-100 text-[#1a56db] text-[10px] font-bold shrink-0 mt-0.5">
+              <span className="px-2 py-0.5 rounded bg-blue-100 text-accent text-[10px] font-bold shrink-0 mt-0.5">
                 {item.stage}
               </span>
               <div className="flex-1 min-w-0">
@@ -393,7 +394,7 @@ function AdmissionTab({ college }: { college: College }) {
           ].map((q, i) => (
             <div key={i} className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
               <p className="text-[10px] text-slate-400">{q.cat}</p>
-              <p className="font-extrabold text-sm text-[#1a56db] mt-1">{q.quota}</p>
+              <p className="font-extrabold text-sm text-accent mt-1">{q.quota}</p>
             </div>
           ))}
         </div>
@@ -425,7 +426,7 @@ function CutoffTab({ college }: { college: College }) {
                 key={cat}
                 onClick={() => setSelectedCat(cat)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                  selectedCat === cat ? 'bg-[#1a56db] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  selectedCat === cat ? 'bg-accent text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
                 {cat}
@@ -452,7 +453,7 @@ function CutoffTab({ college }: { college: College }) {
                 <tr key={idx} className="hover:bg-slate-50/50">
                   <td className="py-3 font-bold text-slate-800">{item.course}</td>
                   <td className="py-3">
-                    <span className="px-2 py-0.5 rounded bg-blue-50 text-[#1a56db] font-semibold text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-blue-50 text-accent font-semibold text-[10px]">
                       {item.exam}
                     </span>
                   </td>
@@ -472,12 +473,12 @@ function CutoffTab({ college }: { college: College }) {
 
         <div className="mt-6 p-4 bg-blue-50/50 border border-blue-100 rounded-xl flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-2">
-            <Info size={16} className="text-[#1a56db]" />
+            <Info size={16} className="text-accent" />
             <p className="text-xs text-slate-700">Want to know if your rank is sufficient for {college.shortName}?</p>
           </div>
           <Link
             href="/admission-probability"
-            className="px-3.5 py-1.5 bg-[#1a56db] hover:bg-blue-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1"
+            className="px-3.5 py-1.5 bg-accent hover:bg-accent text-white rounded-lg text-xs font-semibold flex items-center gap-1"
           >
             Check Admission Chance <ArrowRight size={12} />
           </Link>
@@ -682,7 +683,7 @@ function RankingsTab({ college }: { college: College }) {
           </div>
           <button
             onClick={() => setShowMethodology(true)}
-            className="px-3 py-1.5 text-xs text-[#1a56db] border border-blue-200 bg-blue-50 rounded-lg hover:bg-blue-100 font-semibold"
+            className="px-3 py-1.5 text-xs text-accent border border-blue-200 bg-blue-50 rounded-lg hover:bg-blue-100 font-semibold"
           >
             Ranking Methodology
           </button>
@@ -692,14 +693,14 @@ function RankingsTab({ college }: { college: College }) {
           {college.rankings.map((r, i) => (
             <div key={i} className="bg-slate-50 border border-slate-200/80 rounded-xl p-5 flex items-center justify-between">
               <div>
-                <span className="px-2 py-0.5 rounded bg-blue-100 text-[#1a56db] text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded bg-blue-100 text-accent text-[10px] font-bold">
                   {r.year} Ranking
                 </span>
                 <h4 className="font-extrabold text-slate-900 text-base mt-1">{r.body}</h4>
                 <p className="text-xs text-slate-500">{r.category} Category</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-extrabold text-[#1a56db]">#{r.rank}</p>
+                <p className="text-3xl font-extrabold text-accent">#{r.rank}</p>
                 <p className="text-[10px] text-slate-400 uppercase font-semibold">National Rank</p>
               </div>
             </div>
@@ -736,23 +737,23 @@ function RankingsTab({ college }: { college: College }) {
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span>Teaching, Learning & Resources (TLR)</span>
-                  <span className="font-bold text-[#1a56db]">30%</span>
+                  <span className="font-bold text-accent">30%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span>Research and Professional Practice (RPC)</span>
-                  <span className="font-bold text-[#1a56db]">30%</span>
+                  <span className="font-bold text-accent">30%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span>Graduation Outcomes & Placements (GO)</span>
-                  <span className="font-bold text-[#1a56db]">20%</span>
+                  <span className="font-bold text-accent">20%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span>Outreach and Inclusivity (OI)</span>
-                  <span className="font-bold text-[#1a56db]">10%</span>
+                  <span className="font-bold text-accent">10%</span>
                 </div>
                 <div className="flex justify-between p-2 bg-slate-50 rounded-lg">
                   <span>Perception & Industry Reputation (PR)</span>
-                  <span className="font-bold text-[#1a56db]">10%</span>
+                  <span className="font-bold text-accent">10%</span>
                 </div>
               </div>
             </motion.div>
@@ -898,7 +899,7 @@ function ReviewsTab({ college }: { college: College }) {
           <p className="text-sm text-slate-600 leading-relaxed mb-3">{review.experience}</p>
 
           <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-100">
-            <button className="flex items-center gap-1.5 text-slate-500 hover:text-[#1a56db]">
+            <button className="flex items-center gap-1.5 text-slate-500 hover:text-accent">
               <ThumbsUp size={12} /> Helpful ({review.helpfulCount})
             </button>
             <button className="text-slate-400 hover:text-red-500">Report</button>
@@ -936,7 +937,7 @@ function CampusTab({ college }: { college: College }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {facilities.map((fac, idx) => (
             <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-3">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#1a56db] flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-9 h-9 rounded-lg bg-blue-50 text-accent flex items-center justify-center shrink-0 mt-0.5">
                 <fac.icon size={18} />
               </div>
               <div>
@@ -1096,7 +1097,7 @@ function QATab({ college }: { college: College }) {
           </div>
           <button
             onClick={() => setAskModalOpen(true)}
-            className="px-3.5 py-1.5 bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+            className="px-3.5 py-1.5 bg-accent hover:bg-accent text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
           >
             <Plus size={13} /> Ask Question
           </button>
@@ -1120,7 +1121,7 @@ function QATab({ college }: { college: College }) {
               </div>
 
               <div className="flex items-center gap-3 text-xs text-slate-400 pt-1">
-                <button className="flex items-center gap-1 hover:text-[#1a56db]">
+                <button className="flex items-center gap-1 hover:text-accent">
                   <ThumbsUp size={12} /> Upvote ({q.upvotes})
                 </button>
                 <span>·</span>
@@ -1164,7 +1165,7 @@ function QATab({ college }: { college: College }) {
                 />
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#1a56db] text-white rounded-xl text-xs font-bold shadow-sm"
+                  className="w-full py-2.5 bg-accent text-white rounded-xl text-xs font-bold shadow-sm"
                 >
                   Submit Question
                 </button>
@@ -1309,19 +1310,13 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
   const college = getCollegeById(id);
   if (!college) notFound();
 
-  const { savedColleges, toggleSave, addToCompare, removeFromCompare, compareList } = useApp();
+  const { addToCompare, removeFromCompare, compareList } = useApp();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState('Overview');
   const match = simulateAIMatch(college.id, STUDENT_PROFILE);
 
-  const isSaved = savedColleges.includes(college.id);
   const inCompare = compareList.includes(college.id);
 
-  function handleSave() {
-    if (!college) return;
-    toggleSave(college.id);
-    showToast(isSaved ? 'Removed from shortlist' : `${college.shortName} saved to shortlist`);
-  }
   function handleCompare() {
     if (!college) return;
     if (inCompare) {
@@ -1334,137 +1329,107 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
-      {/* College Institutional Hero Banner — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-8 pb-10 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Profile header */}
+      <header className="border-b border-line">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-8 pt-8 sm:pt-10">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted">
+            <Link href="/" className="hover:text-ink transition-colors">Home</Link>
+            <ChevronRight size={12} />
+            <Link href="/colleges" className="hover:text-ink transition-colors">Colleges</Link>
+            <ChevronRight size={12} />
+            <span className="text-ink">{college.shortName}</span>
+          </nav>
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs text-slate-300 mb-6">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRight size={12} className="text-slate-400" />
-            <Link href="/colleges" className="hover:text-white transition-colors">Colleges</Link>
-            <ChevronRight size={12} className="text-slate-400" />
-            <span className="text-blue-300 font-semibold">{college.shortName}</span>
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-end">
+            <div className="min-w-0">
+              <p className="label">
+                {college.type} · {college.naacGrade} NAAC · Est. {college.established}
+                {college.rankings.find(r => r.body === 'NIRF') && ` · NIRF #${college.rankings.find(r => r.body === 'NIRF')!.rank} ${college.rankings.find(r => r.body === 'NIRF')!.category}`}
+              </p>
+              <h1 className="font-display mt-3 text-[2.4rem] sm:text-6xl font-semibold tracking-[-0.03em] leading-[0.98] text-ink max-w-4xl">
+                {college.name}
+              </h1>
+              <p className="mt-3 flex items-center gap-1.5 text-muted">
+                <MapPin size={15} /> {college.location} · {college.campus}
+              </p>
+            </div>
+            <div className="flex items-end gap-6">
+              <div className="text-right">
+                <p className="label">Reality Score</p>
+                <p className="font-display text-7xl sm:text-8xl font-semibold tracking-[-0.04em] leading-[0.85] text-accent nums">{college.realityScore}</p>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-start gap-6 flex-wrap">
-            {/* High-End Institutional Monogram */}
-            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-2xl bg-gradient-to-br from-[#1E3A8A] to-[#0B1F3A] border border-blue-400/30 text-white font-display font-black text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-xl shadow-blue-950/40">
-              {college.shortName.slice(0, 4).toUpperCase()}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 flex-wrap mb-2">
-                <h1 className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-white tracking-[-0.03em] leading-tight">
-                  {college.name}
-                </h1>
-                {college.verified && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold tracking-wide">
-                    <CheckCircle size={12} className="text-emerald-400" /> Verified Institute
-                  </span>
-                )}
-              </div>
-
-              {/* Institution Meta Tags */}
-              <div className="flex items-center gap-2.5 text-xs text-slate-300 flex-wrap">
-                <span className="flex items-center gap-1 font-medium text-slate-200">
-                  <MapPin size={13} className="text-blue-400" /> {college.location}
-                </span>
-                <span className="text-slate-500">•</span>
-                <span className="px-2 py-0.5 rounded bg-white/10 text-slate-200 font-semibold">{college.type}</span>
-                <span className="text-slate-500">•</span>
-                <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-200 font-semibold">{college.naacGrade} NAAC</span>
-                <span className="text-slate-500">•</span>
-                <span>Est. {college.established}</span>
-                <span className="text-slate-500">•</span>
-                <span>{college.campus}</span>
-              </div>
-
-              {/* Reviews and Ratings */}
-              <div className="flex items-center gap-4 mt-3.5 flex-wrap">
-                <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-xs px-3 py-1.5 rounded-xl border border-white/10">
-                  <div className="flex items-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map(s => (
-                      <Star
-                        key={s}
-                        size={13}
-                        className={s <= Math.round(college.studentRating) ? 'text-amber-400 fill-amber-400' : 'text-slate-500 fill-slate-500'}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs font-bold text-white ml-1">{college.studentRating}</span>
-                  <span className="text-[11px] text-slate-300">({college.totalReviews.toLocaleString()} verified reviews)</span>
-                </div>
-
-                <div className="flex items-center gap-2 bg-blue-500/15 border border-blue-400/30 px-3 py-1.5 rounded-xl text-xs text-blue-200 font-bold">
-                  <Shield size={13} className="text-blue-400" />
-                  Reality Score: <strong className="text-white font-extrabold">{college.realityScore}/100</strong>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="flex items-center gap-2 self-start mt-2 sm:mt-0">
-              <button
-                onClick={handleSave}
-                className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  isSaved
-                    ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
-                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
-                }`}
-              >
-                <Bookmark size={14} className={isSaved ? 'fill-slate-950' : ''} />
-                {isSaved ? 'Saved' : 'Save'}
-              </button>
-              <button
-                onClick={handleCompare}
-                className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  inCompare
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
-                }`}
-              >
-                <GitCompare size={14} />
-                {inCompare ? 'In Matrix' : 'Compare'}
-              </button>
-              <button
-                onClick={() => {
-                  navigator.clipboard?.writeText(window.location.href);
-                  showToast('College profile link copied');
-                }}
-                className="flex items-center gap-1.5 px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl text-xs font-bold transition-all"
-                title="Copy Share Link"
-              >
-                <Share2 size={14} />
-                Share
-              </button>
-            </div>
+          <div className="mt-8 flex flex-wrap items-center gap-2">
+            <SaveButton collegeId={college.id} collegeName={college.shortName} variant="labelled" />
+            <button
+              onClick={handleCompare}
+              aria-pressed={inCompare}
+              className={`h-9 px-3 rounded-lg border text-xs font-medium inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
+                inCompare ? 'bg-accent-soft border-accent/30 text-accent-deep' : 'bg-surface border-line hover:border-ink-2'
+              }`}
+            >
+              <GitCompare size={14} /> {inCompare ? 'In compare' : 'Compare'}
+            </button>
+            <button
+              onClick={() => {
+                navigator.clipboard?.writeText(window.location.href);
+                showToast('College profile link copied');
+              }}
+              className="h-9 px-3 rounded-lg border border-line bg-surface text-xs font-medium inline-flex items-center gap-1.5 hover:border-ink-2 transition-colors cursor-pointer"
+            >
+              <Share2 size={14} /> Share
+            </button>
+            {inCompare && (
+              <Link href="/compare" className="h-9 px-3 text-xs font-medium inline-flex items-center text-accent hover:underline">
+                Open comparison →
+              </Link>
+            )}
           </div>
+
+          {/* Key modules */}
+          <dl className="mt-10 grid grid-cols-2 md:grid-cols-5 border-t border-ink nums">
+            {[
+              { k: 'Placement', v: `${college.placementPercent}%`, tone: 'text-positive' },
+              { k: 'Median CTC', v: `₹${college.medianPackage}L` },
+              { k: 'Tuition / yr', v: `₹${college.totalFees}L` },
+              { k: 'Hostel / yr', v: college.hasHostel ? `₹${college.hostelFees}L` : 'Off-campus' },
+              { k: 'Student rating', v: `${college.studentRating} / 5`, sub: `${college.totalReviews.toLocaleString('en-IN')} reviews` },
+            ].map((m, i) => (
+              <div key={m.k} className={`py-5 pr-4 ${i > 0 ? 'md:pl-5 md:border-l md:border-line' : ''} ${i % 2 === 1 ? 'pl-4 border-l border-line md:pl-5' : ''}`}>
+                <dt className="label">{m.k}</dt>
+                <dd className={`mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-[-0.025em] ${m.tone ?? ''}`}>{m.v}</dd>
+                {m.sub && <dd className="text-xs text-muted mt-0.5">{m.sub}</dd>}
+              </div>
+            ))}
+          </dl>
         </div>
-      </div>
+      </header>
 
-      {/* Modern Sticky Tab Bar */}
-      <div className="sticky top-16 z-30 bg-white border-b border-slate-200/80 shadow-2xs">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-none py-2">
+      {/* Section tabs */}
+      <div className="sticky top-14 z-30 bg-paper/90 backdrop-blur-md border-b border-line">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
+          <div role="tablist" aria-label="College sections" className="flex items-center gap-1 overflow-x-auto scrollbar-none">
             {TABS.map(tab => {
               const isActive = activeTab === tab;
               return (
                 <button
                   key={tab}
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                    isActive
-                      ? 'bg-[#0B1F3A] text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  className={`relative px-3.5 py-3.5 text-[13.5px] whitespace-nowrap transition-colors cursor-pointer ${
+                    isActive ? 'text-ink font-medium' : 'text-muted hover:text-ink'
                   }`}
                 >
                   {tab}
+                  {isActive && (
+                    <motion.span layoutId="profile-tab" className="absolute left-3 right-3 bottom-0 h-[2px] rounded-full bg-accent" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
+                  )}
                 </button>
               );
             })}
@@ -1473,7 +1438,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Tab Content Layout */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main 2 Cols */}
           <div className="lg:col-span-2">
@@ -1575,13 +1540,13 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
             </div>
 
             {/* Compare CTA */}
-            <div className="bg-gradient-to-br from-[#0f1b2d] to-[#1a2f4e] text-white rounded-2xl p-5 shadow-md">
+            <div className="bg-gradient-to-br from-ink to-ink-2 text-white rounded-2xl p-5 shadow-md">
               <Sparkles size={20} className="text-blue-400 mb-3" />
               <h3 className="font-bold text-sm mb-1">Side-by-Side Comparison</h3>
               <p className="text-xs text-slate-400 mb-4">Compare {college.shortName} with up to 4 other top institutions with AI decision guidance.</p>
               <Link
                 href="/compare"
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#1a56db] hover:bg-blue-600 rounded-xl text-xs font-semibold transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-accent hover:bg-accent rounded-xl text-xs font-semibold transition-colors"
               >
                 Open Comparison Assistant <ArrowUpRight size={14} />
               </Link>

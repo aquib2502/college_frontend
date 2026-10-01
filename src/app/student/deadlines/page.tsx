@@ -56,11 +56,11 @@ export default function StudentDeadlinesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] text-slate-800">
+    <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
       {/* Header */}
-      <div className="bg-[#0f1b2d] text-white pt-10 pb-16 px-4 sm:px-6">
+      <div className="bg-ink text-white pt-10 pb-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
@@ -87,7 +87,7 @@ export default function StudentDeadlinesPage() {
 
             <Link
               href="/admissions"
-              className="px-4 py-2.5 bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition-all shrink-0"
+              className="px-4 py-2.5 bg-accent hover:bg-accent text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition-all shrink-0"
             >
               Centralized Admissions Hub <ArrowRight size={14} />
             </Link>
@@ -110,7 +110,7 @@ export default function StudentDeadlinesPage() {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   activeTab === tab.id
-                    ? 'bg-[#1a56db] text-white shadow-sm'
+                    ? 'bg-accent text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -137,7 +137,7 @@ export default function StudentDeadlinesPage() {
               >
                 <div className="flex items-start gap-3.5">
                   <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                    item.urgent ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-blue-50 text-[#1a56db] border border-blue-100'
+                    item.urgent ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-blue-50 text-accent border border-blue-100'
                   }`}>
                     <Calendar size={20} />
                   </div>
@@ -163,7 +163,7 @@ export default function StudentDeadlinesPage() {
 
                 <div className="flex items-center gap-3 sm:self-center shrink-0">
                   <div className="text-right sm:mr-2">
-                    <p className={`text-base font-extrabold ${item.urgent ? 'text-red-600' : 'text-[#1a56db]'}`}>
+                    <p className={`text-base font-extrabold ${item.urgent ? 'text-red-600' : 'text-accent'}`}>
                       {item.daysLeft} Days
                     </p>
                     <p className="text-[10px] text-slate-400">Remaining</p>

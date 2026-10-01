@@ -21,10 +21,10 @@ export default function StudentComparisonsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] text-slate-800">
+    <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
-      <div className="bg-[#0f1b2d] text-white pt-10 pb-16 px-4 sm:px-6">
+      <div className="bg-ink text-white pt-10 pb-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
             <Link href="/" className="hover:text-slate-200">Home</Link>
@@ -50,7 +50,7 @@ export default function StudentComparisonsPage() {
 
             <Link
               href="/compare"
-              className="px-4 py-2.5 bg-[#1a56db] hover:bg-blue-600 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all shrink-0"
+              className="px-4 py-2.5 bg-accent hover:bg-accent text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all shrink-0"
             >
               Open Full Compare Matrix <ArrowUpRight size={14} />
             </Link>
@@ -69,7 +69,7 @@ export default function StudentComparisonsPage() {
             {activeColleges.length >= 2 && (
               <Link
                 href="/compare"
-                className="px-3.5 py-1.5 bg-[#1a56db] text-white rounded-lg text-xs font-semibold hover:bg-blue-600 transition-colors"
+                className="px-3.5 py-1.5 bg-accent text-white rounded-lg text-xs font-semibold hover:bg-accent transition-colors"
               >
                 Compare Now →
               </Link>
@@ -79,7 +79,7 @@ export default function StudentComparisonsPage() {
           {activeColleges.length === 0 ? (
             <div className="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200">
               <p className="text-xs text-slate-500 mb-3">No colleges in your comparison list yet.</p>
-              <Link href="/colleges" className="px-3.5 py-2 bg-[#1a56db] text-white rounded-xl text-xs font-semibold">
+              <Link href="/colleges" className="px-3.5 py-2 bg-accent text-white rounded-xl text-xs font-semibold">
                 Browse Colleges to Add
               </Link>
             </div>
@@ -124,7 +124,7 @@ export default function StudentComparisonsPage() {
                 </div>
                 <Link
                   href="/compare"
-                  className="px-3.5 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-[#1a56db] rounded-lg text-xs font-semibold transition-all self-start sm:self-center"
+                  className="px-3.5 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-accent rounded-lg text-xs font-semibold transition-all self-start sm:self-center"
                 >
                   Load Comparison →
                 </Link>

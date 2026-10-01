@@ -49,11 +49,11 @@ export default function AdmissionProbabilityPage() {
   const probInfo = result !== null ? getProbabilityLabel(result) : null;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB]">
+    <div className="min-h-screen bg-paper">
       <Navbar />
 
       {/* Hero Banner — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-[#0B1F3A] text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
+      <div className="relative bg-ink text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -90,7 +90,7 @@ export default function AdmissionProbabilityPage() {
                     onClick={() => setForm(f => ({ ...f, exam }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                       form.exam === exam
-                        ? 'bg-[#0B1F3A] text-white shadow-sm'
+                        ? 'bg-ink text-white shadow-sm'
                         : 'bg-slate-50 border border-slate-200 text-slate-700 hover:border-slate-300'
                     }`}
                   >
@@ -104,7 +104,7 @@ export default function AdmissionProbabilityPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Score / Percentile</label>
-                <span className="font-display font-extrabold text-xs text-blue-600">{form.percentile} Percentile</span>
+                <span className="font-display font-extrabold text-xs text-accent">{form.percentile} Percentile</span>
               </div>
               <input
                 type="range"
@@ -132,7 +132,7 @@ export default function AdmissionProbabilityPage() {
                     onClick={() => setForm(f => ({ ...f, category: cat }))}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                       form.category === cat
-                        ? 'bg-blue-600 text-white shadow-sm'
+                        ? 'bg-accent text-white shadow-sm'
                         : 'bg-slate-50 border border-slate-200 text-slate-700 hover:border-slate-300'
                     }`}
                   >
@@ -158,7 +158,7 @@ export default function AdmissionProbabilityPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Class 12th Board Aggregate</label>
-                <span className="font-display font-extrabold text-xs text-blue-600">{form.marks}%</span>
+                <span className="font-display font-extrabold text-xs text-accent">{form.marks}%</span>
               </div>
               <input
                 type="range"
@@ -174,7 +174,7 @@ export default function AdmissionProbabilityPage() {
             <button
               onClick={handleCalculate}
               disabled={loading}
-              className="w-full py-3 bg-[#0B1F3A] hover:bg-blue-900 disabled:opacity-60 text-white rounded-xl text-xs font-bold tracking-wide uppercase transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="w-full py-3 bg-ink hover:bg-blue-900 disabled:opacity-60 text-white rounded-xl text-xs font-bold tracking-wide uppercase transition-colors flex items-center justify-center gap-2 shadow-sm"
             >
               {loading ? (
                 <>
@@ -250,7 +250,7 @@ export default function AdmissionProbabilityPage() {
 
                   {/* Disclaimer */}
                   <div className="flex items-start gap-2.5 p-3.5 bg-blue-50/60 border border-blue-100 rounded-xl">
-                    <Info size={15} className="text-blue-600 mt-0.5 shrink-0" />
+                    <Info size={15} className="text-accent mt-0.5 shrink-0" />
                     <p className="text-[11px] text-blue-900 leading-relaxed">
                       Statistical projection derived from multi-year centralized admission registers. Final allotment depends on official counselling choice filling and category rank shifts.
                     </p>
@@ -260,7 +260,7 @@ export default function AdmissionProbabilityPage() {
 
               {(!result || loading) && !loading && (
                 <div className="bg-white border border-slate-200/90 rounded-2xl p-10 text-center shadow-xs">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 text-accent flex items-center justify-center mx-auto mb-3">
                     <TrendingUp size={28} />
                   </div>
                   <h3 className="font-display font-bold text-slate-900 text-sm mb-1">Ready to Calculate</h3>
