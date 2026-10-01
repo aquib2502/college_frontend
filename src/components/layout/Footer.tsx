@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles, Globe, Rss, Mail, ExternalLink } from 'lucide-react';
+import { Globe, Rss, Mail, ExternalLink } from 'lucide-react';
 
 const FOOTER_LINKS = {
   'Explore': [
@@ -27,16 +27,13 @@ const FOOTER_LINKS = {
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0f1b2d] text-white mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+    <footer className="bg-[#0b1528] text-white border-t border-slate-800">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                <Sparkles size={16} className="text-white" />
-              </div>
-              <span className="font-bold text-white text-lg">CollegeIQ</span>
+            <Link href="/" className="inline-block text-[20px] font-bold tracking-[-0.03em] text-white mb-4">
+              <span>College<span className="text-[#3b82f6]">IQ</span></span>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
               India&apos;s most transparent college discovery platform. Find. Verify. Compare. Decide.
