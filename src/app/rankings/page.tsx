@@ -161,7 +161,10 @@ export default function RankingsPage() {
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-400 truncate">
-                          {college.city}, {college.state} · NIRF #{college.nirfRank}
+                          {college.city}, {college.state}
+                          {college.rankings.find(r => r.body === 'NIRF')
+                            ? ` · NIRF #${college.rankings.find(r => r.body === 'NIRF')?.rank}`
+                            : ''}
                         </p>
                       </div>
                     </Link>

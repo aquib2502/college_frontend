@@ -1318,10 +1318,12 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
   const inCompare = compareList.includes(college.id);
 
   function handleSave() {
+    if (!college) return;
     toggleSave(college.id);
     showToast(isSaved ? 'Removed from shortlist' : `${college.shortName} saved to shortlist`);
   }
   function handleCompare() {
+    if (!college) return;
     if (inCompare) {
       removeFromCompare(college.id);
       showToast('Removed from comparison');
