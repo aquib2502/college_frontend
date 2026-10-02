@@ -20,7 +20,6 @@ type Metric = { label: string; value: (c: College) => number; fmt: (v: number) =
 const SCORE: Metric = { label: 'Reality Score', value: c => c.realityScore, fmt: v => `${Math.round(v)}`, max: 100 };
 const ROI: Metric = { label: 'Median ÷ fee', value: roiOf, fmt: v => `${v.toFixed(1)}×`, max: 26 };
 const PLACEMENT: Metric = { label: 'Placement', value: c => c.placementPercent, fmt: v => `${Math.round(v)}%`, max: 100 };
-const FEE: Metric = { label: 'Tuition / yr', value: c => c.totalFees, fmt: v => `₹${v.toFixed(1)}L`, max: 8, lowerIsBetter: true };
 
 const has = (c: College, re: RegExp) => c.courses.some(co => re.test(co.name));
 
@@ -126,7 +125,7 @@ export default function RankingsPage() {
                         className="group relative border-b border-line hover:bg-surface transition-colors"
                       >
                         <div className="grid grid-cols-[2.75rem_1fr_auto] sm:grid-cols-[3.5rem_1fr_10rem_5.5rem_auto] items-center gap-3 sm:gap-5 py-4 px-1 sm:px-3">
-                          <span className={cn('font-display text-2xl sm:text-3xl font-semibold tracking-[-0.03em] nums', i === 0 ? 'text-accent' : 'text-ink/30')}>
+                          <span className={cn('figure text-2xl sm:text-3xl font-semibold tracking-[-0.03em] nums', i === 0 ? 'text-accent' : 'text-ink/30')}>
                             <AnimatedNumber value={i + 1} prefix={i + 1 < 10 ? '0' : ''} duration={0.35} />
                           </span>
                           <Link href={`/colleges/${c.id}`} className="min-w-0 flex items-center gap-3">
@@ -147,7 +146,7 @@ export default function RankingsPage() {
                               transition={{ duration: 0.55, ease: EASE_OUT }}
                             />
                           </span>
-                          <span className="font-mono text-base sm:text-lg font-semibold nums text-right">
+                          <span className="figure text-base sm:text-lg font-semibold nums text-right">
                             {m.fmt(v)}
                           </span>
                           <span className="hidden sm:flex items-center gap-2">
@@ -182,16 +181,16 @@ export default function RankingsPage() {
           <aside className="lg:col-span-4">
             <div className="lg:sticky lg:top-24 rounded-[22px] border border-line bg-surface p-6">
               <p className="label">Where each college sits</p>
-              <p className="mt-1 font-display text-xl font-semibold tracking-[-0.02em]">Placement vs. median-to-fee ratio</p>
+              <p className="mt-1 text-xl font-semibold tracking-[-0.015em]">Placement vs. median-to-fee ratio</p>
               <ScatterPlot highlight={rankedIds} leader={ranked[0]?.id} />
               <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t border-line nums">
                 <div>
                   <p className="label">In this view</p>
-                  <p className="font-display text-3xl font-semibold"><AnimatedNumber value={ranked.length} /></p>
+                  <p className="figure text-3xl font-semibold"><AnimatedNumber value={ranked.length} /></p>
                 </div>
                 <div>
                   <p className="label">Avg. placement</p>
-                  <p className="font-display text-3xl font-semibold">
+                  <p className="figure text-3xl font-semibold">
                     <AnimatedNumber value={ranked.length ? ranked.reduce((s, c) => s + c.placementPercent, 0) / ranked.length : 0} suffix="%" />
                   </p>
                 </div>
@@ -225,7 +224,7 @@ export default function RankingsPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="label">Methodology</p>
-                  <h2 className="font-display text-2xl font-semibold tracking-[-0.02em] mt-1">How the Reality Score is weighted</h2>
+                  <h2 className="text-2xl font-semibold tracking-[-0.015em] mt-1">How the Reality Score is weighted</h2>
                 </div>
                 <button onClick={() => setShowMethodology(false)} aria-label="Close" className="w-9 h-9 rounded-lg border border-line flex items-center justify-center hover:border-ink-2 cursor-pointer">
                   <X size={16} />
@@ -236,7 +235,7 @@ export default function RankingsPage() {
                   <li key={name}>
                     <div className="flex items-baseline justify-between gap-4">
                       <span className="font-medium">{name}</span>
-                      <span className="font-mono text-sm nums">{weight}</span>
+                      <span className="figure font-medium text-sm nums">{weight}</span>
                     </div>
                     <div className="mt-1.5 h-1.5 rounded-full bg-paper-2 overflow-hidden">
                       <motion.div

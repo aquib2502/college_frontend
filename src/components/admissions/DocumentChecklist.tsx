@@ -1,38 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { REQUIRED_DOCUMENTS } from '@/lib/admissionsData';
 import { EASE_OUT } from '@/components/motion/Reveal';
 import { cn } from '@/lib/utils';
+import { createLocalStore, useLocalStore } from '@/lib/localStore';
 
-const KEY = 'collegeiq:documents:v1';
+const docsStore = createLocalStore<string[]>('collegeiq:documents:v1', [], v =>
+  Array.isArray(v) && v.every(x => typeof x === 'string') ? v : undefined,
+);
 
 /** Tick-off list of counselling documents; progress is kept in this browser. */
 export default function DocumentChecklist() {
   const reduce = useReducedMotion();
-  const [done, setDone] = useState<string[]>([]);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(KEY);
-      if (raw) setDone(JSON.parse(raw));
-    } catch {
-      // Storage unavailable — checklist still works for this visit.
-    }
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
-    try {
-      window.localStorage.setItem(KEY, JSON.stringify(done));
-    } catch {
-      // ignore
-    }
-  }, [done, ready]);
+  const done = useLocalStore(docsStore);
+  const setDone = docsStore.set;
 
   const toggle = (id: string) => setDone(d => (d.includes(id) ? d.filter(x => x !== id) : [...d, id]));
   const essential = REQUIRED_DOCUMENTS.filter(d => d.essential);
@@ -43,7 +26,7 @@ export default function DocumentChecklist() {
     <div>
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="font-display text-5xl font-semibold tracking-[-0.03em] nums">
+          <p className="figure text-5xl font-semibold tracking-[-0.03em] nums">
             {done.length}<span className="text-muted text-2xl">/{REQUIRED_DOCUMENTS.length}</span>
           </p>
           <p className="text-sm text-muted mt-1">

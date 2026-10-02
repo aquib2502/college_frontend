@@ -167,7 +167,7 @@ export default function SpecializationExplorer() {
                 <dl className="mt-10 grid grid-cols-3 gap-6 max-w-lg nums">
                   <div>
                     <dt className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-white/45">Median CTC</dt>
-                    <dd className="mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-[-0.03em]">
+                    <dd className="mt-1 figure text-3xl sm:text-4xl font-semibold tracking-[-0.03em]">
                       <AnimatedNumber value={spec.medianPackage} decimals={1} prefix="₹" suffix="L" />
                     </dd>
                   </div>
@@ -175,14 +175,14 @@ export default function SpecializationExplorer() {
                     <dt className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-white/45">Placement</dt>
                     <dd className="mt-1 flex items-center gap-2.5">
                       <Ring value={spec.placementRate} />
-                      <span className="font-display text-3xl sm:text-4xl font-semibold tracking-[-0.03em]">
+                      <span className="figure text-3xl sm:text-4xl font-semibold tracking-[-0.03em]">
                         <AnimatedNumber value={spec.placementRate} suffix="%" />
                       </span>
                     </dd>
                   </div>
                   <div>
                     <dt className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-white/45">Colleges</dt>
-                    <dd className="mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-[-0.03em]">
+                    <dd className="mt-1 figure text-3xl sm:text-4xl font-semibold tracking-[-0.03em]">
                       <AnimatedNumber value={spec.collegesCount} />
                     </dd>
                   </div>

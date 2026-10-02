@@ -1,14 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { useNow } from '@/hooks/useNow';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { formatShortDate, getRoundStatus, sortedSchedule, type CounsellingRound } from '@/lib/admissionsData';
 import { EASE_OUT } from '@/components/motion/Reveal';
 import { cn } from '@/lib/utils';
 
-function statusText(round: CounsellingRound) {
-  const s = getRoundStatus(round);
+function statusText(round: CounsellingRound, now: Date | null) {
+  if (!now) return ' ';
+  const s = getRoundStatus(round, now);
   if (s.status === 'upcoming') return s.days === 0 ? 'Opens today' : `Opens in ${s.days} day${s.days === 1 ? '' : 's'}`;
   if (s.status === 'open') return s.days === 0 ? 'Closes today' : `Open · closes in ${s.days} day${s.days === 1 ? '' : 's'}`;
   return 'Closed';
@@ -20,8 +22,10 @@ function statusText(round: CounsellingRound) {
  */
 export default function AdmissionsTimeline({ rounds = sortedSchedule(), tone = 'light' }: { rounds?: CounsellingRound[]; tone?: 'light' | 'dark' }) {
   const reduce = useReducedMotion();
-  const firstLive = rounds.find(r => getRoundStatus(r).status !== 'closed')?.id ?? rounds[0]?.id;
-  const [activeId, setActiveId] = useState(firstLive);
+  const now = useNow();
+  const [picked, setActiveId] = useState<string | null>(null);
+  const firstLive = now ? rounds.find(r => getRoundStatus(r, now).status !== 'closed')?.id : undefined;
+  const activeId = picked ?? firstLive ?? rounds[0]?.id;
   const dark = tone === 'dark';
 
   return (
@@ -29,7 +33,7 @@ export default function AdmissionsTimeline({ rounds = sortedSchedule(), tone = '
       <ol className="flex flex-col md:flex-row md:items-stretch">
         {rounds.map((r, i) => {
           const active = r.id === activeId;
-          const status = getRoundStatus(r).status;
+          const status = now ? getRoundStatus(r, now).status : 'upcoming';
           const start = formatShortDate(r.startDate);
           return (
             <motion.li
@@ -71,11 +75,11 @@ export default function AdmissionsTimeline({ rounds = sortedSchedule(), tone = '
                 />
                 <span className="block md:pt-8">
                   <span className={cn('font-mono text-[11px] uppercase tracking-[0.1em]', dark ? 'text-white/50' : 'text-muted')}>{start.month}</span>
-                  <span className={cn('block font-display text-5xl font-semibold tracking-[-0.032em] leading-none nums', active ? (dark ? 'text-white' : 'text-ink') : dark ? 'text-white/40' : 'text-ink/35')}>
+                  <span className={cn('block figure text-5xl font-semibold tracking-[-0.032em] leading-none nums', active ? (dark ? 'text-white' : 'text-ink') : dark ? 'text-white/40' : 'text-ink/35')}>
                     {start.day}
                   </span>
                   <span className={cn('mt-3 block text-[15px] font-medium', dark ? 'text-white' : 'text-ink')}>{r.shortName}</span>
-                  <span className={cn('block text-xs mt-0.5', status === 'open' ? 'text-positive' : dark ? 'text-white/50' : 'text-muted')}>{statusText(r)}</span>
+                  <span className={cn('block text-xs mt-0.5', status === 'open' ? 'text-positive' : dark ? 'text-white/50' : 'text-muted')}>{statusText(r, now)}</span>
                 </span>
               </motion.button>
 

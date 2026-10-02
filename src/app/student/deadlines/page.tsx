@@ -77,7 +77,7 @@ export default function StudentDeadlinesPage() {
                 <Bell size={13} />
                 Admission Calendar & Alerts
               </div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
+              <h1 className="text-3xl font-semibold tracking-tight">
                 Upcoming Admission Deadlines
               </h1>
               <p className="text-slate-300 text-xs sm:text-sm mt-1">
@@ -163,7 +163,7 @@ export default function StudentDeadlinesPage() {
 
                 <div className="flex items-center gap-3 sm:self-center shrink-0">
                   <div className="text-right sm:mr-2">
-                    <p className={`text-base font-extrabold ${item.urgent ? 'text-red-600' : 'text-accent'}`}>
+                    <p className={`text-base font-semibold ${item.urgent ? 'text-red-600' : 'text-accent'}`}>
                       {item.daysLeft} Days
                     </p>
                     <p className="text-[10px] text-slate-400">Remaining</p>

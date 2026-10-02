@@ -27,7 +27,7 @@ export default function TrustStrip() {
               transition={{ duration: 0.45, delay: i * 0.07, ease: EASE_OUT }}
               className={`py-8 sm:py-10 px-1 sm:px-6 ${i % 2 === 1 ? 'pl-5 border-l border-line' : ''} ${i > 0 ? 'lg:pl-6 lg:border-l lg:border-line' : 'lg:pl-0'} ${i > 1 ? 'border-t lg:border-t-0 border-line' : ''}`}
             >
-              <p className="font-display text-[2.1rem] sm:text-5xl font-semibold tracking-[-0.028em] leading-none text-ink nums">
+              <p className="figure text-[2.1rem] sm:text-5xl font-semibold tracking-[-0.028em] leading-none text-ink nums">
                 {m.kind === 'number' ? (
                   <AnimatedNumber value={m.value} suffix={m.suffix} grouped fromZero duration={1.1} />
                 ) : (

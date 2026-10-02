@@ -231,33 +231,27 @@ export default function ExamsPage() {
     <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
-      {/* Hero Header — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-ink text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-4">
-            <Sparkles size={12} className="text-blue-400" />
-            Verified Admission Intelligence
-          </div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-white tracking-[-0.03em] leading-tight mb-3">
-            National & State Entrance Examinations
+      {/* Header */}
+      <div className="border-b border-line pt-10 sm:pt-14 pb-10 px-4 sm:px-8">
+        <div className="max-w-[1240px] mx-auto">
+          <p className="label">Entrance exams</p>
+          <h1 className="font-display mt-3 text-[2.5rem] sm:text-6xl font-semibold tracking-[-0.028em] leading-[0.98] text-ink">
+            National and state entrance exams.
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">
+          <p className="mt-4 text-muted text-base sm:text-lg max-w-3xl leading-relaxed">
             Transparent schedules, official exam formats, qualifying cutoffs, and participating institutions across Engineering, Management, and Medicine.
           </p>
 
           {/* Search & Stream Filter */}
           <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-300" />
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search examinations (e.g. JEE Main, MHT-CET, CAT)..."
-                className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 text-xs sm:text-sm font-medium outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/15 transition-all shadow-md shadow-blue-950/20"
+                className="w-full h-11 pl-10 pr-4 bg-surface border border-line-2/80 rounded-xl text-ink placeholder:text-faint text-sm outline-none focus:border-accent/60 transition-colors"
               />
             </div>
 
@@ -266,10 +260,8 @@ export default function ExamsPage() {
                 <button
                   key={st}
                   onClick={() => setSelectedStream(st)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                    selectedStream === st
-                      ? 'bg-accent text-white shadow-sm'
-                      : 'bg-white/10 text-slate-300 hover:bg-white/15'
+                  className={`h-10 px-3.5 rounded-lg text-[13px] whitespace-nowrap transition-colors cursor-pointer ${
+                    selectedStream === st ? 'bg-ink text-paper' : 'text-ink-2 hover:bg-surface'
                   }`}
                 >
                   {st}
@@ -281,7 +273,7 @@ export default function ExamsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Exam Cards List */}
           <div className="lg:col-span-5 space-y-3">
@@ -353,7 +345,7 @@ export default function ExamsPage() {
                       {selectedExam.frequency}
                     </span>
                   </div>
-                  <h2 className="text-2xl font-extrabold text-slate-900">{selectedExam.fullName}</h2>
+                  <h2 className="text-2xl font-semibold text-slate-900">{selectedExam.fullName}</h2>
                   <p className="text-xs text-slate-400 mt-1">Conducted by: {selectedExam.conductingBody}</p>
                 </div>
 

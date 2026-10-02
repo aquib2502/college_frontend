@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, SlidersHorizontal, LayoutGrid, List, X, ChevronDown, Filter,
-  Sparkles, CheckCircle2, SearchX, RotateCcw, Building2, MapPin
+  CheckCircle2, SearchX, RotateCcw, Building2, MapPin
 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -92,38 +92,27 @@ function CollegesContent() {
     <div className="min-h-screen bg-paper">
       <Navbar />
 
-      {/* Header Banner — Deep Navy with subtle electric blue glow */}
-      <div className="relative bg-ink text-white pt-12 pb-14 px-4 overflow-hidden">
-        {/* Glow backdrop */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto relative z-10">
+      {/* Header */}
+      <div className="border-b border-line pt-10 sm:pt-14 pb-10 px-4 sm:px-8">
+        <div className="max-w-[1240px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-3">
-                <Sparkles size={12} className="text-blue-400" />
-                Verified Institutional Directory
-              </div>
-              <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-[-0.03em] leading-tight">
-                Explore Top Colleges & Universities
+              <p className="label">Discover · college directory</p>
+              <h1 className="font-display mt-3 text-[2.5rem] sm:text-6xl font-semibold tracking-[-0.028em] leading-[0.98] text-ink">
+                Explore colleges.
               </h1>
-              <p className="mt-2 text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+              <p className="mt-4 text-muted text-base sm:text-lg max-w-2xl leading-relaxed">
                 Filter by genuine placement statistics, transparent fee structures, verified student reality scores, and NIRF benchmarks.
               </p>
             </div>
 
-            {/* Quick stats pill */}
-            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2.5 rounded-2xl self-start md:self-auto">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-slate-200">
-                <strong className="text-white font-semibold">{COLLEGES.length}</strong> Accredited Campuses Listed
-              </span>
-            </div>
+            <p className="font-mono text-xs text-muted self-start md:self-auto nums">
+              <span className="text-ink font-semibold">{COLLEGES.length}</span> colleges in the demo dataset
+            </p>
           </div>
 
           {/* AI Search & Filter Command Bar */}
-          <div className="bg-white p-3 rounded-2xl shadow-xl shadow-blue-950/20 border border-slate-200/80 flex flex-col md:flex-row items-stretch gap-2.5">
+          <div className="bg-surface p-3 rounded-[20px] shadow-[0_24px_50px_-34px_rgba(18,20,23,0.4)] border border-line-2/80 focus-within:border-accent/60 transition-colors flex flex-col md:flex-row items-stretch gap-2.5">
             <div className="flex-1 relative flex items-center">
               <Search size={18} className="absolute left-4 text-accent shrink-0" />
               <input
@@ -198,13 +187,13 @@ function CollegesContent() {
           </div>
 
           {/* Quick Filter Pill Tags */}
-          <div className="mt-3 flex items-center gap-2 flex-wrap text-xs text-slate-300">
-            <span className="text-slate-400 text-[11px] font-medium uppercase tracking-wider">Quick Filters:</span>
+          <div className="mt-4 flex items-center gap-1 flex-wrap text-xs">
+            <span className="label mr-2">Quick filters</span>
             {POPULAR_TAGS.map(tag => (
               <button
                 key={tag}
                 onClick={() => handleTagClick(tag)}
-                className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-medium transition-colors"
+                className="h-8 px-3 rounded-full text-[13px] text-ink-2 hover:text-ink hover:bg-surface border border-transparent hover:border-line transition-colors"
               >
                 {tag}
               </button>
@@ -255,7 +244,7 @@ function CollegesContent() {
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div className="flex items-center gap-2">
                       <SlidersHorizontal size={16} className="text-accent" />
-                      <h3 className="font-display font-bold text-slate-900 text-sm tracking-tight">Refine Discovery</h3>
+                      <h3 className="font-bold text-slate-900 text-sm tracking-tight">Refine Discovery</h3>
                     </div>
                     {activeFilters.length > 0 && (
                       <button
@@ -385,7 +374,7 @@ function CollegesContent() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-5">
               <p className="text-sm font-medium text-slate-600">
-                Showing <strong className="font-extrabold text-ink">{results.length}</strong> matching verified institutions
+                Showing <strong className="font-semibold text-ink">{results.length}</strong> matching verified institutions
               </p>
             </div>
 
@@ -394,9 +383,9 @@ function CollegesContent() {
                 <div className="w-14 h-14 rounded-2xl bg-blue-50 text-accent flex items-center justify-center mx-auto mb-4">
                   <SearchX size={28} />
                 </div>
-                <h3 className="font-display font-bold text-slate-900 text-lg mb-1.5">No colleges match your criteria</h3>
+                <h3 className="font-bold text-slate-900 text-lg mb-1.5">No colleges match your criteria</h3>
                 <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
-                  We couldn't find any verified colleges with your exact search parameters. Try expanding your fee range or clearing active filters.
+                  No colleges match all your filters. Try widening the fee range or removing a filter.
                 </p>
                 <button
                   onClick={resetAllFilters}

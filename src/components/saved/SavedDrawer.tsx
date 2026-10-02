@@ -59,7 +59,7 @@ export default function SavedDrawer() {
             <header className="flex items-start justify-between px-6 pt-6 pb-5 border-b border-line">
               <div>
                 <p className="label">Shortlist</p>
-                <h2 className="font-display text-2xl font-semibold tracking-tight mt-1">
+                <h2 className="text-2xl font-semibold tracking-tight mt-1">
                   {saved.length} saved {saved.length === 1 ? 'college' : 'colleges'}
                 </h2>
               </div>
@@ -75,7 +75,7 @@ export default function SavedDrawer() {
             <div className="flex-1 overflow-y-auto">
               {saved.length === 0 ? (
                 <div className="px-6 py-14 text-center">
-                  <p className="font-display text-lg font-semibold">Nothing saved yet.</p>
+                  <p className="text-lg font-semibold">Nothing saved yet.</p>
                   <p className="text-sm text-muted mt-1.5 max-w-[16rem] mx-auto">
                     Tap the bookmark on any college to keep it here for comparison.
                   </p>
@@ -115,15 +115,15 @@ export default function SavedDrawer() {
                               <dl className="mt-3 grid grid-cols-3 gap-2 nums">
                                 <div>
                                   <dt className="label !text-[10px]">Score</dt>
-                                  <dd className="font-mono text-sm font-semibold">{c.realityScore}</dd>
+                                  <dd className="figure text-sm font-semibold">{c.realityScore}</dd>
                                 </div>
                                 <div>
                                   <dt className="label !text-[10px]">Fee / yr</dt>
-                                  <dd className="font-mono text-sm font-semibold">₹{c.totalFees}L</dd>
+                                  <dd className="figure text-sm font-semibold">₹{c.totalFees}L</dd>
                                 </div>
                                 <div>
                                   <dt className="label !text-[10px]">Median</dt>
-                                  <dd className="font-mono text-sm font-semibold">₹{c.medianPackage}L</dd>
+                                  <dd className="figure text-sm font-semibold">₹{c.medianPackage}L</dd>
                                 </div>
                               </dl>
                             </div>

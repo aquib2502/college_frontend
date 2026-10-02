@@ -1,24 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import HeroDiscovery from '@/components/home/HeroDiscovery';
 import TrustStrip from '@/components/home/TrustStrip';
 import TopColleges from '@/components/home/TopColleges';
-import Matcher from '@/components/home/Matcher';
+import Matcher, { type MatcherHandle } from '@/components/home/Matcher';
 import SpecializationExplorer from '@/components/home/SpecializationExplorer';
 import SentimentSection from '@/components/home/SentimentSection';
 import VerifySection from '@/components/home/VerifySection';
-import HowItWorks from '@/components/home/HowItWorks';
 import AdmissionsPreview from '@/components/home/AdmissionsPreview';
 import FinalCTA from '@/components/home/FinalCTA';
 
 export default function HomePage() {
-  const [handoff, setHandoff] = useState<{ query: string; nonce: number }>();
+  const matcher = useRef<MatcherHandle>(null);
 
   function seeAll(query: string) {
-    setHandoff({ query, nonce: Date.now() });
+    matcher.current?.run(query);
     document.getElementById('matcher')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -34,11 +33,10 @@ export default function HomePage() {
         <HeroDiscovery onSeeAll={seeAll} />
         <TrustStrip />
         <TopColleges />
-        <Matcher incoming={handoff} />
+        <Matcher ref={matcher} />
         <SpecializationExplorer />
         <SentimentSection />
         <VerifySection />
-        <HowItWorks />
         <AdmissionsPreview />
         <FinalCTA onStart={startSearch} />
       </main>

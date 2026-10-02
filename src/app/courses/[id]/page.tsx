@@ -55,7 +55,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">
+              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">
                 {course.name}
               </h1>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
@@ -66,7 +66,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             {/* Quick action card */}
             <div className="bg-white/10 backdrop-blur-md border border-white/15 p-5 rounded-2xl shrink-0 w-full md:w-72">
               <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">National Median Package</p>
-              <p className="text-3xl font-extrabold text-emerald-400 mb-1">{formatPackage(course.medianPackage)}</p>
+              <p className="text-3xl font-semibold text-emerald-400 mb-1">{formatPackage(course.medianPackage)}</p>
               <p className="text-[11px] text-slate-400 mb-4">Highest recorded: ₹{course.highestPackage}L</p>
 
               <Link

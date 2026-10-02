@@ -44,14 +44,14 @@ const TABS = [
 ];
 
 // ─── Score Ring Component ─────────────────────────────────────────────────────
-function ScoreRing({ score, size = 80, label }: { score: number; size?: number; label?: string }) {
+function ScoreRing({ score, size = 80, label, hideValue = false }: { score: number; size?: number; label?: string; hideValue?: boolean }) {
   const color = getScoreColor(score);
   const r = (size - 12) / 2;
   const circ = 2 * Math.PI * r;
   const dash = (score / 100) * circ;
 
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="relative flex flex-col items-center gap-1">
       <svg width={size} height={size} className="-rotate-90">
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e2e8f0" strokeWidth="8" />
         <motion.circle
@@ -68,9 +68,11 @@ function ScoreRing({ score, size = 80, label }: { score: number; size?: number; 
           transition={{ duration: 1, delay: 0.3 }}
         />
       </svg>
-      <div className="absolute flex flex-col items-center justify-center" style={{ width: size, height: size }}>
-        <span className="text-xl font-bold" style={{ color }}>{score}</span>
-      </div>
+      {!hideValue && (
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 flex flex-col items-center justify-center" style={{ width: size, height: size }}>
+          <span className="text-xl font-bold" style={{ color }}>{score}</span>
+        </div>
+      )}
       {label && <p className="text-[10px] text-slate-500 font-medium text-center">{label}</p>}
     </div>
   );
@@ -105,7 +107,7 @@ function RealityScoreSection({ college }: { college: College }) {
 
       <div className="flex flex-col sm:flex-row items-center gap-8">
         <div className="relative shrink-0">
-          <ScoreRing score={college.realityScore} size={96} />
+          <ScoreRing score={college.realityScore} size={96} hideValue />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <p className="text-2xl font-bold" style={{ color: getScoreColor(college.realityScore) }}>
@@ -210,7 +212,7 @@ function OverviewTab({ college, match }: { college: College; match: ReturnType<t
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Reality Score', value: `${college.realityScore}/100`, color: getScoreColor(college.realityScore), sub: 'Composite quality' },
-          { label: 'Your AI Match', value: `${match.matchPercent}%`, color: '#7c3aed', sub: 'Profile fit' },
+          { label: 'Profile fit (demo)', value: `${match.matchPercent}%`, color: '#2b4fe0', sub: 'Profile fit' },
           { label: 'Total Fees / Year', value: `₹${college.totalFees}L`, color: '#1a56db', sub: 'Tuition + est. living' },
           { label: 'Median CTC', value: formatPackage(college.medianPackage), color: '#059669', sub: `${college.placementPercent}% placed` },
         ].map((item, i) => (
@@ -232,10 +234,9 @@ function OverviewTab({ college, match }: { college: College; match: ReturnType<t
       <RealityScoreSection college={college} />
 
       {/* AI Match Explanation */}
-      <div className="bg-gradient-to-br from-violet-50 to-blue-50 border border-violet-100 rounded-2xl p-6 shadow-sm">
+      <div className="bg-accent-soft/50 border border-line rounded-2xl p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles size={16} className="text-violet-600" />
-          <h3 className="font-bold text-violet-900 text-sm">Why This Matches You ({match.matchPercent}% Match)</h3>
+          <h3 className="font-bold text-ink text-sm">Why This Matches You ({match.matchPercent}% Match)</h3>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -294,16 +295,16 @@ function OverviewTab({ college, match }: { college: College; match: ReturnType<t
         <div className="flex items-center justify-between mb-3">
           <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
             <Shield size={14} className="text-emerald-600" />
-            Verification & Audit Status
+            Data sources
           </h4>
-          <span className="text-[11px] text-slate-400">Audited Oct 2025</span>
+          <span className="text-[11px] text-slate-400">Demo data in this prototype</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           {[
-            { label: 'Placement Data', status: 'Verified', source: 'NIRF / Official Report' },
-            { label: 'Accreditation', status: 'Verified', source: `${college.naacGrade} NAAC Portal` },
-            { label: 'Fee Structure', status: 'Verified', source: 'State Fee Regulating Auth' },
-            { label: 'Student Reviews', status: '100% Verified', source: 'Student ID Scrutiny' },
+            { label: 'Placement Data', status: 'Sourced', source: 'NIRF / Official Report' },
+            { label: 'Accreditation', status: 'Sourced', source: `${college.naacGrade} NAAC Portal` },
+            { label: 'Fee Structure', status: 'Sourced', source: 'State Fee Regulating Auth' },
+            { label: 'Student Reviews', status: 'Sourced', source: 'Enrolment-checked reviews' },
           ].map((item, i) => (
             <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
               <p className="text-[10px] text-slate-400">{item.label}</p>
@@ -394,7 +395,7 @@ function AdmissionTab({ college }: { college: College }) {
           ].map((q, i) => (
             <div key={i} className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
               <p className="text-[10px] text-slate-400">{q.cat}</p>
-              <p className="font-extrabold text-sm text-accent mt-1">{q.quota}</p>
+              <p className="font-semibold text-sm text-accent mt-1">{q.quota}</p>
             </div>
           ))}
         </div>
@@ -552,7 +553,7 @@ function PlacementsTab({ college }: { college: College }) {
         {[
           { label: 'Placement %', value: `${college.placementPercent}%`, color: '#1a56db' },
           { label: 'Median Package', value: formatPackage(college.medianPackage), color: '#059669' },
-          { label: 'Average Package', value: formatPackage(college.averagePackage), color: '#7c3aed' },
+          { label: 'Average Package', value: formatPackage(college.averagePackage), color: '#2b4fe0' },
           { label: 'Highest Package', value: formatPackage(college.highestPackage), color: '#d97706' },
         ].map((m, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
@@ -598,11 +599,10 @@ function PlacementsTab({ college }: { college: College }) {
         </div>
       </div>
 
-      {/* AI Placement Intelligence */}
-      <div className="bg-gradient-to-br from-violet-50 to-blue-50 border border-violet-100 rounded-2xl p-5 shadow-sm">
+      {/* Ask about placements */}
+      <div className="bg-accent-soft/50 border border-line rounded-2xl p-5 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles size={16} className="text-violet-600" />
-          <h3 className="font-bold text-violet-800 text-sm">AI Placement Intelligence</h3>
+          <h3 className="font-bold text-ink text-sm">Ask about placements</h3>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
@@ -610,7 +610,7 @@ function PlacementsTab({ college }: { college: College }) {
             <button
               key={i}
               onClick={() => askAI(insight.question)}
-              className="px-3 py-2 bg-white border border-violet-200 rounded-lg text-xs font-medium text-violet-700 hover:bg-violet-50 transition-colors"
+              className="px-3 py-2 bg-white border border-line rounded-lg text-xs font-medium text-accent-deep hover:bg-accent-soft transition-colors"
             >
               {insight.question}
             </button>
@@ -623,19 +623,19 @@ function PlacementsTab({ college }: { college: College }) {
             value={aiQ}
             onChange={e => setAiQ(e.target.value)}
             placeholder="Ask about placements (e.g. CSE average, tech companies)..."
-            className="flex-1 px-3 py-2 bg-white border border-violet-200 rounded-lg text-sm outline-none focus:border-violet-400"
+            className="flex-1 px-3 py-2 bg-white border border-line rounded-lg text-sm outline-none focus:border-accent"
           />
           <button
             onClick={() => aiQ && askAI(aiQ)}
-            className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-accent hover:bg-accent-deep text-white rounded-lg text-sm font-medium transition-colors"
           >
             Ask
           </button>
         </div>
 
         {loadingAI && (
-          <div className="flex items-center gap-2 text-sm text-violet-600">
-            <div className="w-4 h-4 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center gap-2 text-sm text-accent">
+            <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
             Analysing placement data...
           </div>
         )}
@@ -644,10 +644,10 @@ function PlacementsTab({ college }: { college: College }) {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white border border-violet-100 rounded-xl p-4 space-y-2"
+            className="bg-white border border-line rounded-xl p-4 space-y-2"
           >
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold text-violet-500 uppercase tracking-wide px-2 py-0.5 bg-violet-50 rounded-full">
+              <span className="text-[10px] font-semibold text-accent uppercase tracking-wide px-2 py-0.5 bg-accent-soft rounded-full">
                 AI Interpretation
               </span>
               <span className="text-[10px] text-slate-400">
@@ -696,11 +696,11 @@ function RankingsTab({ college }: { college: College }) {
                 <span className="px-2 py-0.5 rounded bg-blue-100 text-accent text-[10px] font-bold">
                   {r.year} Ranking
                 </span>
-                <h4 className="font-extrabold text-slate-900 text-base mt-1">{r.body}</h4>
+                <h4 className="font-semibold text-slate-900 text-base mt-1">{r.body}</h4>
                 <p className="text-xs text-slate-500">{r.category} Category</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-extrabold text-accent">#{r.rank}</p>
+                <p className="text-3xl font-semibold text-accent">#{r.rank}</p>
                 <p className="text-[10px] text-slate-400 uppercase font-semibold">National Rank</p>
               </div>
             </div>
@@ -784,8 +784,7 @@ function ReviewsTab({ college }: { college: College }) {
       {/* AI Summary */}
       <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200 rounded-2xl p-5 shadow-sm">
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles size={14} className="text-violet-500" />
-          <span className="text-xs font-semibold text-violet-600">AI Review Intelligence Summary</span>
+          <span className="text-xs font-semibold text-accent">Review summary</span>
           <span className="text-[10px] text-slate-400">· {college.totalReviews.toLocaleString()} verified student reviews · 2023–2026</span>
         </div>
         <p className="text-sm text-slate-700 leading-relaxed">
@@ -1023,7 +1022,7 @@ function ScholarshipsTab({ college }: { college: College }) {
                 <p className="text-xs text-slate-600 mt-1"><span className="font-semibold">Eligibility:</span> {s.eligibility}</p>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-sm font-extrabold text-emerald-700">{s.amount}</p>
+                <p className="text-sm font-semibold text-emerald-700">{s.amount}</p>
                 <p className="text-[10px] text-slate-400">Award Value</p>
               </div>
             </div>
@@ -1237,7 +1236,7 @@ function ROITab({ college }: { college: College }) {
           ].map((m, i) => (
             <div key={i} className="p-3.5 bg-slate-50 border border-slate-100 rounded-xl">
               <span className="text-[10px] text-slate-400 block mb-1">{m.label}</span>
-              <span className="text-lg font-extrabold" style={{ color: m.color }}>{m.value}</span>
+              <span className="text-lg font-semibold" style={{ color: m.color }}>{m.value}</span>
             </div>
           ))}
         </div>
@@ -1357,9 +1356,9 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
               </p>
             </div>
             <div className="flex items-end gap-6">
-              <div className="text-right">
+              <div className="lg:text-right">
                 <p className="label">Reality Score</p>
-                <p className="font-display text-7xl sm:text-8xl font-semibold tracking-[-0.04em] leading-[0.85] text-accent nums">{college.realityScore}</p>
+                <p className="figure text-7xl sm:text-8xl font-semibold tracking-[-0.04em] leading-[0.85] text-accent nums">{college.realityScore}</p>
               </div>
             </div>
           </div>
@@ -1402,7 +1401,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
             ].map((m, i) => (
               <div key={m.k} className={`py-5 pr-4 ${i > 0 ? 'md:pl-5 md:border-l md:border-line' : ''} ${i % 2 === 1 ? 'pl-4 border-l border-line md:pl-5' : ''}`}>
                 <dt className="label">{m.k}</dt>
-                <dd className={`mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-[-0.025em] ${m.tone ?? ''}`}>{m.v}</dd>
+                <dd className={`mt-1 figure text-3xl sm:text-4xl font-semibold tracking-[-0.025em] ${m.tone ?? ''}`}>{m.v}</dd>
                 {m.sub && <dd className="text-xs text-muted mt-0.5">{m.sub}</dd>}
               </div>
             ))}
@@ -1516,7 +1515,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
                   { label: 'Placement %', value: `${college.placementPercent}%` },
                   { label: 'Student Rating', value: `★ ${college.studentRating}` },
                   { label: 'Reality Score', value: `${college.realityScore}/100` },
-                  { label: 'AI Match Fit', value: `${match.matchPercent}% Match` },
+                  { label: 'Profile fit (demo)', value: `${match.matchPercent}% Match` },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex items-center justify-between text-xs">
                     <span className="text-slate-400">{label}</span>
@@ -1541,7 +1540,6 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
 
             {/* Compare CTA */}
             <div className="bg-gradient-to-br from-ink to-ink-2 text-white rounded-2xl p-5 shadow-md">
-              <Sparkles size={20} className="text-blue-400 mb-3" />
               <h3 className="font-bold text-sm mb-1">Side-by-Side Comparison</h3>
               <p className="text-xs text-slate-400 mb-4">Compare {college.shortName} with up to 4 other top institutions with AI decision guidance.</p>
               <Link

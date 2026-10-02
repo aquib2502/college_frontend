@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { createLocalStore, useLocalStore } from '@/lib/localStore';
 
 type Role = 'student' | 'college' | 'admin';
 
@@ -23,6 +24,18 @@ const STORAGE_KEY = 'collegeiq:shortlist:v1';
 const DEFAULT_COMPARE = ['coep', 'vjti', 'manipal'];
 const DEFAULT_SAVED = ['coep', 'vjti', 'bits-pilani'];
 
+const isIdList = (v: unknown): v is string[] => Array.isArray(v) && v.every(x => typeof x === 'string');
+
+const shortlistStore = createLocalStore<{ saved: string[]; compare: string[] }>(
+  STORAGE_KEY,
+  { saved: DEFAULT_SAVED, compare: DEFAULT_COMPARE },
+  v => {
+    const o = v as { saved?: unknown; compare?: unknown } | null;
+    if (!o || !isIdList(o.saved) || !isIdList(o.compare)) return undefined;
+    return { saved: o.saved, compare: o.compare.slice(0, MAX_COMPARE) };
+  },
+);
+
 const AppContext = createContext<AppContextValue>({
   role: 'student',
   setRole: () => {},
@@ -37,45 +50,22 @@ const AppContext = createContext<AppContextValue>({
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<Role>('student');
-  const [compareList, setCompareList] = useState<string[]>(DEFAULT_COMPARE);
-  const [savedColleges, setSavedColleges] = useState<string[]>(DEFAULT_SAVED);
   const [savedOpen, setSavedOpen] = useState(false);
-  const hydrated = useRef(false);
-
-  // Restore the visitor's shortlist after mount so server and client markup match.
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as { saved?: string[]; compare?: string[] };
-        if (Array.isArray(parsed.saved)) setSavedColleges(parsed.saved);
-        if (Array.isArray(parsed.compare)) setCompareList(parsed.compare.slice(0, MAX_COMPARE));
-      }
-    } catch {
-      // Storage unavailable (private mode, blocked) — fall back to demo defaults.
-    }
-    hydrated.current = true;
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated.current) return;
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ saved: savedColleges, compare: compareList }));
-    } catch {
-      // Ignore write failures; state still works for this session.
-    }
-  }, [savedColleges, compareList]);
+  // Shortlist persists in this browser; prerendered markup uses the demo defaults.
+  const { saved: savedColleges, compare: compareList } = useLocalStore(shortlistStore);
 
   function addToCompare(id: string) {
-    setCompareList(prev => (prev.length < MAX_COMPARE && !prev.includes(id) ? [...prev, id] : prev));
+    shortlistStore.set(s =>
+      s.compare.length < MAX_COMPARE && !s.compare.includes(id) ? { ...s, compare: [...s.compare, id] } : s,
+    );
   }
 
   function removeFromCompare(id: string) {
-    setCompareList(prev => prev.filter(c => c !== id));
+    shortlistStore.set(s => ({ ...s, compare: s.compare.filter(c => c !== id) }));
   }
 
   function toggleSave(id: string) {
-    setSavedColleges(prev => (prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]));
+    shortlistStore.set(s => ({ ...s, saved: s.saved.includes(id) ? s.saved.filter(c => c !== id) : [...s.saved, id] }));
   }
 
   return (

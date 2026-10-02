@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calculator, Sparkles, TrendingUp, DollarSign, Clock, ShieldCheck, ArrowRight, Percent } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
+import PageHeader from '@/components/layout/PageHeader';
 import Footer from '@/components/layout/Footer';
 
 function formatNum(n: number) {
@@ -35,47 +36,34 @@ export default function ROICalculatorPage() {
     <div className="min-h-screen bg-paper">
       <Navbar />
 
-      {/* Hero Banner — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-ink text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <PageHeader
+        label="ROI calculator"
+        title="Will it pay back?"
+        description="Total cost against expected salary, and how long it takes to recover — before you commit."
+      />
 
-        <div className="max-w-5xl mx-auto relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-4">
-            <Calculator size={12} className="text-blue-400" />
-            Financial Feasibility Engine
-          </div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-white tracking-[-0.03em] leading-tight mb-3">
-            Higher Education ROI Calculator
-          </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Calculate accurate return on investment, tuition-to-compensation ratios, and realistic payback timelines before committing.
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 -mt-6 relative z-20">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Inputs Column */}
           <div className="lg:col-span-6 bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 shadow-xl shadow-blue-950/5 space-y-6">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h2 className="font-display font-bold text-slate-900 text-base">Cost & Compensation Parameters</h2>
+              <h2 className="font-bold text-slate-900 text-base">Cost & Compensation Parameters</h2>
               <span className="text-[11px] font-semibold text-accent bg-blue-50 px-2 py-0.5 rounded-full">Interactive</span>
             </div>
 
             {[
-              { key: 'tuition', label: 'Tuition Fee (Per Year)', min: 0.5, max: 15, step: 0.1, unit: '₹L' },
-              { key: 'hostel', label: 'Hostel Fee (Per Year)', min: 0, max: 3, step: 0.1, unit: '₹L' },
-              { key: 'living', label: 'Living Expenses (Per Year)', min: 0, max: 3, step: 0.1, unit: '₹L' },
-              { key: 'other', label: 'Other Academic Costs', min: 0, max: 2, step: 0.1, unit: '₹L' },
+              { key: 'tuition', label: 'Tuition Fee (Per Year)', min: 0.5, max: 15, step: 0.1, unit: 'L' },
+              { key: 'hostel', label: 'Hostel Fee (Per Year)', min: 0, max: 3, step: 0.1, unit: 'L' },
+              { key: 'living', label: 'Living Expenses (Per Year)', min: 0, max: 3, step: 0.1, unit: 'L' },
+              { key: 'other', label: 'Other Academic Costs', min: 0, max: 2, step: 0.1, unit: 'L' },
               { key: 'duration', label: 'Degree Duration', min: 1, max: 5, step: 1, unit: 'Years' },
-              { key: 'medianSalary', label: 'Expected First Year Median CTC', min: 2, max: 50, step: 0.5, unit: '₹L / yr' },
+              { key: 'medianSalary', label: 'Expected First Year Median CTC', min: 2, max: 50, step: 0.5, unit: 'L / yr' },
             ].map(({ key, label, min, max, step, unit }) => (
               <div key={key}>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-700">{label}</label>
-                  <span className="font-display font-black text-xs text-accent">
-                    {inputs[key as keyof typeof inputs]} {unit}
+                  <span className="figure font-semibold text-xs text-accent">
+                    {unit.startsWith('L') ? `₹${inputs[key as keyof typeof inputs]}${unit === 'L' ? 'L' : 'L / yr'}` : `${inputs[key as keyof typeof inputs]} ${unit}`}
                   </span>
                 </div>
                 <input
@@ -103,10 +91,10 @@ export default function ROICalculatorPage() {
           <div className="lg:col-span-6 space-y-5">
             <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 shadow-xl shadow-blue-950/5">
               <div className="flex items-center justify-between pb-3 mb-5 border-b border-slate-100">
-                <h2 className="font-display font-bold text-slate-900 text-base">Financial Payoff Projections</h2>
+                <h2 className="font-bold text-slate-900 text-base">Financial Payoff Projections</h2>
                 <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                   <ShieldCheck size={12} />
-                  <span>Audited Model</span>
+                  <span>Demo model</span>
                 </div>
               </div>
 
@@ -125,7 +113,7 @@ export default function ROICalculatorPage() {
                     className={`p-4 rounded-xl border text-center ${m.bg}`}
                   >
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{m.label}</p>
-                    <p className={`font-display font-black text-xl ${m.color}`}>{m.value}</p>
+                    <p className={`figure font-semibold text-xl ${m.color}`}>{m.value}</p>
                     <p className="text-[10px] text-slate-400 mt-0.5">{m.sub}</p>
                   </motion.div>
                 ))}
@@ -134,16 +122,16 @@ export default function ROICalculatorPage() {
               {/* ROI Score Banner */}
               <div className="p-5 bg-gradient-to-br from-ink to-ink-2 text-white rounded-xl text-center shadow-md relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-xl pointer-events-none" />
-                <p className="text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">Normalized ROI Index</p>
-                <div className="font-display font-black text-4xl text-white my-1">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">ROI index</p>
+                <div className="figure font-semibold text-4xl text-white my-1">
                   {roiScore} <span className="text-xl font-normal text-blue-300">/ 100</span>
                 </div>
                 <p className="text-xs text-slate-300 mt-2 max-w-sm mx-auto">
                   {roiScore >= 80
-                    ? 'Exceptional return profile: Payback duration is under 2.5 years with minimal financial friction.'
+                    ? "Strong return: you'd recover the full cost in under 2.5 years."
                     : roiScore >= 60
-                    ? 'Healthy investment ratio: Standard amortization profile consistent with top tier engineering colleges.'
-                    : 'High debt recovery period: Consider applying for merit scholarships or institutional fee waivers.'}
+                    ? 'Healthy return: payback in line with established engineering colleges.'
+                    : 'Slow payback: look at scholarships or fee waivers before committing.'}
                 </p>
               </div>
             </div>

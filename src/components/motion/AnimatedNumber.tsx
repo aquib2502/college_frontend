@@ -41,12 +41,7 @@ export default function AnimatedNumber({
   const current = useRef(display);
 
   useEffect(() => {
-    if (fromZero && !inView) return;
-    if (reduce) {
-      current.current = value;
-      setDisplay(value);
-      return;
-    }
+    if (reduce || (fromZero && !inView)) return;
     const controls = animate(current.current, value, {
       duration,
       ease: [0.22, 1, 0.36, 1],
@@ -61,7 +56,7 @@ export default function AnimatedNumber({
   return (
     <span ref={ref} className={className}>
       {prefix}
-      {format(display, decimals, grouped)}
+      {format(reduce ? value : display, decimals, grouped)}
       {suffix}
     </span>
   );

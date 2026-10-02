@@ -68,10 +68,13 @@ export default function Navbar() {
     };
   }, []);
 
-  useEffect(() => {
+  // Close menus when the route changes (adjusting state during render, not in an effect).
+  const [routeSeen, setRouteSeen] = useState(pathname);
+  if (routeSeen !== pathname) {
+    setRouteSeen(pathname);
     setMobileOpen(false);
     setResourcesOpen(false);
-  }, [pathname]);
+  }
 
   const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
   const resourcesActive = RESOURCES.some(r => isActive(r.href));

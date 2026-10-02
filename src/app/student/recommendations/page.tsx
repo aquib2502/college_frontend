@@ -45,7 +45,7 @@ export default function StudentRecommendationsPage() {
                 <Sparkles size={13} />
                 Continuous AI Decision Engine
               </div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
+              <h1 className="text-3xl font-semibold tracking-tight">
                 Recommended For You
               </h1>
               <p className="text-slate-300 text-xs sm:text-sm mt-1">
@@ -131,11 +131,11 @@ export default function StudentRecommendationsPage() {
                   <div className="flex items-center gap-4 text-right">
                     <div>
                       <p className="text-[10px] text-slate-400 font-semibold uppercase">AI Match</p>
-                      <p className="text-2xl font-extrabold text-violet-700">{match.matchPercent}%</p>
+                      <p className="text-2xl font-semibold text-violet-700">{match.matchPercent}%</p>
                     </div>
                     <div>
                       <p className="text-[10px] text-slate-400 font-semibold uppercase">Reality Score</p>
-                      <p className="text-2xl font-extrabold text-accent">{college.realityScore}</p>
+                      <p className="text-2xl font-semibold text-accent">{college.realityScore}</p>
                     </div>
                   </div>
 

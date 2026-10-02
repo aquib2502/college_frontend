@@ -70,10 +70,18 @@ const COMPARE_ROWS = [
   { key: 'established', label: 'Year Established' },
 ];
 
-function bestIndex(colleges: College[], key: string): number {
+// Rows where "higher" or "lower" is meaningfully better.
+const HIGHER_IS_BETTER = new Set(['placementPercent', 'medianPackage', 'averagePackage', 'highestPackage', 'studentRating', 'totalReviews', 'realityScore']);
+const LOWER_IS_BETTER = new Set(['totalFees']);
+
+/** Indices of the best college(s) for a row; empty when the row isn't ranked or everyone ties. */
+function bestIndices(colleges: College[], key: string): number[] {
+  if (!HIGHER_IS_BETTER.has(key) && !LOWER_IS_BETTER.has(key)) return [];
   const vals = colleges.map(c => Number((c as unknown as Record<string, unknown>)[key]));
-  if (vals.some(v => isNaN(v))) return -1;
-  return key === 'totalFees' ? vals.indexOf(Math.min(...vals)) : vals.indexOf(Math.max(...vals));
+  if (vals.some(v => isNaN(v))) return [];
+  const target = LOWER_IS_BETTER.has(key) ? Math.min(...vals) : Math.max(...vals);
+  const idx = vals.flatMap((v, i) => (v === target ? [i] : []));
+  return idx.length === vals.length ? [] : idx;
 }
 
 export default function ComparePage() {
@@ -132,7 +140,7 @@ export default function ComparePage() {
                   }}
                   className="w-full flex items-center justify-between rounded-lg px-3 py-2 text-sm hover:bg-paper cursor-pointer"
                 >
-                  {c.shortName} <span className="font-mono text-xs text-muted">{c.realityScore}</span>
+                  {c.shortName} <span className="figure font-medium text-xs text-muted">{c.realityScore}</span>
                 </button>
               </li>
             ))}
@@ -155,7 +163,7 @@ export default function ComparePage() {
       <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-10">
         {colleges.length < 2 ? (
           <div className="max-w-xl py-16">
-            <p className="font-display text-3xl font-semibold tracking-[-0.025em]">Add at least two colleges to compare.</p>
+            <p className="text-3xl font-semibold tracking-[-0.015em]">Add at least two colleges to compare.</p>
             <p className="mt-2 text-muted">
               You have {colleges.length === 0 ? 'none' : `only ${colleges[0].shortName}`} in your comparison. Save colleges from search or rankings, then tap Compare.
             </p>
@@ -204,14 +212,14 @@ export default function ComparePage() {
                             <X size={14} />
                           </button>
                           <Monogram name={c.shortName} size="md" tone={best ? 'accent' : 'ink'} />
-                          <Link href={`/colleges/${c.id}`} className="mt-4 block font-display text-2xl font-semibold tracking-[-0.022em] leading-tight hover:underline">
+                          <Link href={`/colleges/${c.id}`} className="mt-4 block text-2xl font-semibold tracking-[-0.015em] leading-tight hover:underline">
                             {c.shortName}
                           </Link>
                           <p className={cn('text-sm', best ? 'text-paper/60' : 'text-muted')}>{c.city}, {c.state}</p>
                           <div className="mt-6 flex items-end justify-between">
                             <div>
                               <p className={cn('font-mono text-[10.5px] uppercase tracking-[0.1em]', best ? 'text-paper/50' : 'text-muted')}>Reality Score</p>
-                              <p className="font-display text-5xl font-semibold tracking-[-0.03em] nums leading-none mt-1">{c.realityScore}</p>
+                              <p className="figure text-5xl font-semibold tracking-[-0.03em] nums leading-none mt-1">{c.realityScore}</p>
                             </div>
                             {best && <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-[#9db0ff]">Top fit</span>}
                           </div>
@@ -225,7 +233,7 @@ export default function ComparePage() {
 
             {/* Focus switcher */}
             <div className="mt-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <p className="font-display text-2xl font-semibold tracking-[-0.02em]">What matters most to you?</p>
+              <p className="text-2xl font-semibold tracking-[-0.015em]">What matters most to you?</p>
               <div role="tablist" aria-label="Comparison focus" className="flex p-1 rounded-xl bg-paper-2 border border-line overflow-x-auto scrollbar-none">
                 {FOCI.map(f => (
                   <button
@@ -294,7 +302,7 @@ export default function ComparePage() {
                                         transition={{ duration: 0.55, ease: EASE_OUT }}
                                       />
                                     </span>
-                                    <span className={cn('font-mono text-xs text-right nums', isBest && on && 'text-accent font-semibold')}>{metric.fmt(v)}</span>
+                                    <span className={cn('figure text-xs text-right nums', isBest && on && 'text-accent font-semibold')}>{metric.fmt(v)}</span>
                                   </div>
                                 );
                               })}
@@ -314,7 +322,7 @@ export default function ComparePage() {
             {/* Full table */}
             <section className="mt-14" aria-labelledby="all-metrics">
               <div className="flex items-end justify-between pb-3 border-b border-ink">
-                <h2 id="all-metrics" className="font-display text-2xl font-semibold tracking-[-0.02em]">All metrics</h2>
+                <h2 id="all-metrics" className="text-2xl font-semibold tracking-[-0.015em]">All metrics</h2>
                 <span className="label hidden sm:block">Best in group marked</span>
               </div>
               <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -334,7 +342,7 @@ export default function ComparePage() {
                   </thead>
                   <tbody>
                     {COMPARE_ROWS.map(row => {
-                      const best = bestIndex(colleges, row.key);
+                      const best = bestIndices(colleges, row.key);
                       return (
                         <tr key={row.key} className="border-b border-line hover:bg-surface/70 transition-colors">
                           <th scope="row" className="text-left py-3 pr-4 font-normal text-muted">{row.label}</th>
@@ -342,9 +350,9 @@ export default function ComparePage() {
                             const val = (c as unknown as Record<string, unknown>)[row.key];
                             const text = row.format ? (row.format as (v: unknown) => string)(val) : String(val ?? '—');
                             return (
-                              <td key={c.id} className={cn('py-3 px-3 nums', i === best && 'font-semibold text-accent-deep')}>
+                              <td key={c.id} className={cn('py-3 px-3 nums', best.includes(i) && 'font-semibold text-accent-deep')}>
                                 {text}
-                                {i === best && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" aria-label="Best in group" />}
+                                {best.includes(i) && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent align-middle" aria-label="Best in group" />}
                               </td>
                             );
                           })}
@@ -396,7 +404,7 @@ function TradeOffPanel({ colleges, matchPercents, focus }: { colleges: College[]
   return (
     <section aria-labelledby="tradeoff" className="lg:col-span-5 rounded-[22px] bg-ink text-paper p-5 sm:p-7 self-start lg:sticky lg:top-24">
       <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-paper/50">Trade-off analysis</p>
-      <h2 id="tradeoff" className="mt-1 font-display text-2xl font-semibold tracking-[-0.02em]">Who wins on what</h2>
+      <h2 id="tradeoff" className="mt-1 text-2xl font-semibold tracking-[-0.015em]">Who wins on what</h2>
 
       <ul className="mt-6 space-y-4">
         {dims.map(d => {
@@ -408,7 +416,7 @@ function TradeOffPanel({ colleges, matchPercents, focus }: { colleges: College[]
                 <span className={cn('text-sm', active ? 'text-paper font-medium' : 'text-paper/70')}>{d.label}</span>
                 <span className="text-sm">
                   <span className="text-[#9db0ff]">{colleges[lead].shortName}</span>
-                  <span className="text-paper/50 font-mono text-xs ml-2 nums">{d.fmt(d.vals[lead])}</span>
+                  <span className="text-paper/50 figure font-medium text-xs ml-2 nums">{d.fmt(d.vals[lead])}</span>
                 </span>
               </div>
               <div className="mt-2 flex gap-1.5">

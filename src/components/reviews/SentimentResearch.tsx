@@ -85,7 +85,7 @@ export default function SentimentResearch() {
                   transition={{ duration: 0.6, delay: i * 0.05, ease: EASE_OUT }}
                 />
               </span>
-              <span className="font-mono text-sm text-right nums">{d.avg.toFixed(1)}</span>
+              <span className="figure font-medium text-sm text-right nums">{d.avg.toFixed(1)}</span>
             </li>
           ))}
         </ul>

@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { getCollegeById } from '@/lib/mockData';
 import { COUNSELLING_SCHEDULE, getRoundStatus } from '@/lib/admissionsData';
+import { useNow } from '@/hooks/useNow';
 import Reveal, { EASE_OUT } from '@/components/motion/Reveal';
 
 const coep = getCollegeById('coep')!;
@@ -15,7 +16,8 @@ export default function VerifySection() {
   const grid = useRef<HTMLDivElement>(null);
   const inView = useInView(grid, { once: true, margin: '0px 0px -15% 0px' });
   const total = coep.totalFees + coep.hostelFees;
-  const capStatus = getRoundStatus(cap);
+  const now = useNow();
+  const capStatus = now ? getRoundStatus(cap, now) : { status: 'pending' as const, days: 0 };
 
   const grow = (delay = 0) =>
     reduce
@@ -32,7 +34,7 @@ export default function VerifySection() {
       source: 'Fee regulating authority · college disclosures',
       body: (
         <>
-          <p className="font-display text-4xl font-semibold tracking-[-0.022em] nums">₹{total.toFixed(1)}L<span className="text-base text-muted font-normal"> / yr</span></p>
+          <p className="figure text-4xl font-semibold tracking-[-0.022em] nums">₹{total.toFixed(1)}L<span className="text-base text-muted font-normal"> / yr</span></p>
           <div className="mt-4 flex h-2.5 rounded-full overflow-hidden bg-paper-2">
             <motion.span {...grow(0)} className="origin-left bg-ink" style={{ width: `${(coep.totalFees / total) * 100}%` }} />
             <motion.span {...grow(0.15)} className="origin-left bg-signal" style={{ width: `${(coep.hostelFees / total) * 100}%` }} />
@@ -49,7 +51,7 @@ export default function VerifySection() {
       source: 'NIRF submissions · placement reports',
       body: (
         <>
-          <p className="font-display text-4xl font-semibold tracking-[-0.022em] nums">{coep.placementPercent}%<span className="text-base text-muted font-normal"> placed</span></p>
+          <p className="figure text-4xl font-semibold tracking-[-0.022em] nums">{coep.placementPercent}%<span className="text-base text-muted font-normal"> placed</span></p>
           <div className="mt-4 h-2.5 rounded-full bg-paper-2 overflow-hidden">
             <motion.div {...grow(0.05)} className="h-full origin-left bg-positive" style={{ width: `${coep.placementPercent}%` }} />
           </div>
@@ -64,7 +66,7 @@ export default function VerifySection() {
       source: 'Enrolment-checked student reviews',
       body: (
         <>
-          <p className="font-display text-4xl font-semibold tracking-[-0.022em] nums">{coep.studentRating}<span className="text-base text-muted font-normal"> / 5</span></p>
+          <p className="figure text-4xl font-semibold tracking-[-0.022em] nums">{coep.studentRating}<span className="text-base text-muted font-normal"> / 5</span></p>
           <div className="mt-4 flex gap-1">
             {[1, 2, 3, 4, 5].map(n => (
               <span key={n} className="flex-1 h-2.5 rounded-sm bg-paper-2 overflow-hidden">
@@ -85,8 +87,8 @@ export default function VerifySection() {
       source: 'State CET Cell · JoSAA · institute portals',
       body: (
         <>
-          <p className="font-display text-4xl font-semibold tracking-[-0.022em] nums">
-            {capStatus.status === 'upcoming' ? `${capStatus.days}d` : capStatus.status === 'open' ? 'Open' : 'Closed'}
+          <p className="figure text-4xl font-semibold tracking-[-0.022em] nums">
+            {capStatus.status === 'pending' ? '—' : capStatus.status === 'upcoming' ? `${capStatus.days}d` : capStatus.status === 'open' ? 'Open' : 'Closed'}
             <span className="text-base text-muted font-normal"> {capStatus.status === 'upcoming' ? 'to go' : ''}</span>
           </p>
           <p className="mt-4 text-sm font-medium">{cap.shortName}</p>
@@ -97,12 +99,12 @@ export default function VerifySection() {
   ];
 
   return (
-    <section className="py-20 sm:py-28 bg-surface border-y border-line" aria-labelledby="verify-title">
+    <section className="py-16 sm:py-24 bg-surface border-y border-line" aria-labelledby="verify-title">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
         <Reveal className="grid lg:grid-cols-12 gap-6 items-end">
           <div className="lg:col-span-7">
             <p className="label">What we verify</p>
-            <h2 id="verify-title" className="font-display mt-3 text-4xl sm:text-[3.5rem] font-semibold tracking-[-0.028em] leading-[0.98]">
+            <h2 id="verify-title" className="font-display mt-3 text-3xl sm:text-[2.75rem] font-semibold tracking-[-0.028em] leading-[0.98]">
               Every number has a source.
             </h2>
           </div>

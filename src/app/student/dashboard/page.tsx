@@ -9,6 +9,8 @@ import {
   BarChart2, Search, MapPin,
 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
+import Monogram from '@/components/college/Monogram';
+import PageHeader from '@/components/layout/PageHeader';
 import { COLLEGES, STUDENT_PROFILE, simulateAIMatch, ADMISSION_UPDATES } from '@/lib/mockData';
 import { formatPackage, getScoreColor, getProbabilityLabel } from '@/lib/utils';
 import { useApp } from '@/context/AppContext';
@@ -16,13 +18,13 @@ import CollegeCard from '@/components/college/CollegeCard';
 import Footer from '@/components/layout/Footer';
 
 const AI_INSIGHTS = [
-  { text: 'COEP Pune\'s placement data has been updated. Your match score improved to 94%.', icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-50' },
+  { text: 'COEP Pune is your strongest fit at 94% for the demo profile.', icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-50' },
   { text: 'MH-CET CAP Round 3 registration opens in 18 days. Act early.', icon: AlertTriangle, color: 'text-amber-500', bg: 'bg-amber-50' },
   { text: 'Based on your profile, you have a 82% admission chance at VJTI Mumbai.', icon: CheckCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' },
 ];
 
 export default function StudentDashboardPage() {
-  const { savedColleges } = useApp();
+  const { savedColleges, compareList } = useApp();
   const [activeTab, setActiveTab] = useState<'recommended' | 'saved' | 'compare'>('recommended');
 
   const savedList = COLLEGES.filter(c => savedColleges.includes(c.id));
@@ -32,65 +34,38 @@ export default function StudentDashboardPage() {
     <div className="min-h-screen bg-paper">
       <Navbar />
 
-      {/* Dashboard Header — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-ink text-white pt-10 pb-12 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-2">
-                <Sparkles size={12} className="text-blue-400" />
-                Candidate Command Center
-              </div>
-              <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-white tracking-[-0.03em]">
-                {STUDENT_PROFILE.name}
-              </h1>
-              <p className="text-slate-300 text-xs sm:text-sm mt-1">
-                Your college search profile is{' '}
-                <span className="text-blue-300 font-bold">{STUDENT_PROFILE.searchProgress}% complete</span>
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/ai-college-finder"
-                className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-deep text-white rounded-xl text-xs font-bold transition-all shadow-sm"
-              >
-                <Sparkles size={14} className="text-blue-200" />
-                Launch AI Finder
-              </Link>
-              <Link
-                href="/student/profile"
-                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl text-xs font-bold transition-colors"
-              >
-                <Edit2 size={13} />
-                Edit Profile
-              </Link>
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div className="mt-6 max-w-md">
-            <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${STUDENT_PROFILE.searchProgress}%` }}
-                transition={{ duration: 1, delay: 0.3 }}
-              />
-            </div>
-          </div>
+      <PageHeader
+        label="Student dashboard"
+        title={STUDENT_PROFILE.name}
+        description={`Your college search profile is ${STUDENT_PROFILE.searchProgress}% complete.`}
+        actions={
+          <>
+            <Link href="/ai-college-finder" className="h-10 px-4 rounded-xl bg-ink text-paper text-sm inline-flex items-center gap-2 hover:bg-accent transition-colors">
+              Find colleges
+            </Link>
+            <Link href="/student/profile" className="h-10 px-4 rounded-xl border border-line bg-surface text-sm inline-flex items-center gap-2 hover:border-ink-2 transition-colors">
+              <Edit2 size={13} /> Edit profile
+            </Link>
+          </>
+        }
+      >
+        <div className="mt-6 max-w-md h-1.5 bg-paper-2 rounded-full overflow-hidden" role="progressbar" aria-valuenow={STUDENT_PROFILE.searchProgress} aria-valuemin={0} aria-valuemax={100}>
+          <motion.div
+            className="h-full bg-accent rounded-full origin-left"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: STUDENT_PROFILE.searchProgress / 100 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          />
         </div>
-      </div>
+      </PageHeader>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-8 space-y-6">
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { icon: Bookmark, label: 'Saved Colleges', value: savedColleges.length, href: '/student/saved', color: 'text-amber-500', bg: 'bg-amber-50' },
-            { icon: GitCompare, label: 'In Comparison', value: 3, href: '/compare', color: 'text-blue-500', bg: 'bg-blue-50' },
+            { icon: GitCompare, label: 'In Comparison', value: compareList.length, href: '/compare', color: 'text-blue-500', bg: 'bg-blue-50' },
             { icon: Bell, label: 'Upcoming Deadlines', value: 4, href: '/student/deadlines', color: 'text-red-500', bg: 'bg-red-50' },
             { icon: BookOpen, label: 'Reviews Written', value: 0, href: '#', color: 'text-violet-500', bg: 'bg-violet-50' },
           ].map((item, i) => (
@@ -179,9 +154,7 @@ export default function StudentDashboardPage() {
                             transition={{ delay: i * 0.1 }}
                             className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-xl transition-colors group"
                           >
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-xl shrink-0">
-                              {college.logo}
-                            </div>
+                            <Monogram name={college.shortName} size="md" tone="paper" />
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold text-sm text-slate-800 group-hover:text-accent transition-colors">
                                 {college.shortName}
@@ -225,7 +198,7 @@ export default function StudentDashboardPage() {
                           const prob = getProbabilityLabel(match.admissionProbability);
                           return (
                             <div key={college.id} className="flex items-center gap-3 p-3 border border-slate-100 rounded-xl hover:border-slate-200 transition-colors">
-                              <div className="text-xl">{college.logo}</div>
+                              <Monogram name={college.shortName} size="sm" tone="paper" />
                               <div className="flex-1 min-w-0">
                                 <p className="font-semibold text-sm text-slate-800">{college.shortName}</p>
                                 <p className="text-[11px] text-slate-400">₹{college.totalFees}L/yr · {college.placementPercent}% placed</p>
@@ -245,9 +218,9 @@ export default function StudentDashboardPage() {
 
                 {activeTab === 'compare' && (
                   <div className="space-y-3">
-                    {COLLEGES.filter(c => ['coep', 'vjti', 'manipal'].includes(c.id)).map(college => (
+                    {COLLEGES.filter(c => compareList.includes(c.id)).map(college => (
                       <div key={college.id} className="flex items-center gap-3 p-3 border border-slate-100 rounded-xl">
-                        <div className="text-xl">{college.logo}</div>
+                        <Monogram name={college.shortName} size="sm" tone="paper" />
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-sm text-slate-800">{college.shortName}</p>
                           <p className="text-[11px] text-slate-400">{college.realityScore} Reality Score</p>
@@ -269,8 +242,7 @@ export default function StudentDashboardPage() {
             {/* AI Insights */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <h3 className="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
-                <Sparkles size={14} className="text-violet-500" />
-                AI Insights
+                Insights
               </h3>
               <div className="space-y-3">
                 {AI_INSIGHTS.map((insight, i) => (

@@ -70,7 +70,7 @@ export default function CollegeCard({ college, matchPercent, admissionProb, inde
                 </div>
                 <div className="text-center px-2 py-1 rounded-lg bg-[#EEF5FF] border border-blue-100 shrink-0">
                   <p className="text-[9px] font-mono uppercase tracking-wider text-[#2563EB] font-bold">Reality</p>
-                  <p className="font-extrabold text-sm text-ink leading-none mt-0.5">{college.realityScore}</p>
+                  <p className="font-semibold text-sm text-ink leading-none mt-0.5">{college.realityScore}</p>
                 </div>
               </div>
 

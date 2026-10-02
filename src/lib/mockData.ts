@@ -145,7 +145,7 @@ export const COLLEGES: College[] = [
     placementPercent: 96,
     medianPackage: 28,
     averagePackage: 34,
-    highestPackage: 2.0,
+    highestPackage: 200, // ₹2 Cr, stored in lakhs like every other record
     totalFees: 1.1,
     hostelFees: 0.8,
     hasHostel: true,
@@ -1040,6 +1040,7 @@ export function simulateAIMatch(collegeId: string, profile: typeof STUDENT_PROFI
   whyMatches: string[];
   concerns: string[];
 } {
+  // Demo fit and admission values for the sample student profile.
   const matchMap: Record<string, number> = {
     'coep': 94,
     'vjti': 89,
@@ -1056,10 +1057,28 @@ export function simulateAIMatch(collegeId: string, profile: typeof STUDENT_PROFI
     'iit-bombay': 12,
     'nmims': 65,
   };
+  const college = getCollegeById(collegeId);
+  const admissionProbability = probMap[collegeId] ?? 60;
+
+  // Reasons are derived from the college record against the profile, never hardcoded.
+  const maxBudget = Math.max(...(profile.budget.match(/\d+(\.\d+)?/g) ?? ['0']).map(Number));
+  const whyMatches: string[] = [];
+  const concerns: string[] = [];
+  if (college) {
+    if (college.totalFees <= maxBudget) whyMatches.push('Within budget');
+    else concerns.push(`Fees above your ${profile.budget} budget`);
+    if (college.state === profile.location) whyMatches.push(`In ${profile.location}`);
+    else concerns.push(`Outside ${profile.location}`);
+    if (college.placementPercent >= 85) whyMatches.push(`${college.placementPercent}% placed`);
+    if (profile.hostel && college.hasHostel) whyMatches.push('Hostel available');
+    if (!college.courses.some(c => /Computer|CSE/.test(c.name))) concerns.push('No CSE programme listed');
+  }
+  if (admissionProbability < 50) concerns.push('Admission is competitive for your score');
+
   return {
     matchPercent: matchMap[collegeId] ?? 70,
-    admissionProbability: probMap[collegeId] ?? 60,
-    whyMatches: ['Matches budget', 'In Maharashtra', 'Strong placements', 'Hostel available'],
-    concerns: ['Limited CSE-specific data', 'Admission is competitive'],
+    admissionProbability,
+    whyMatches,
+    concerns,
   };
 }

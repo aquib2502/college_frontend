@@ -96,7 +96,7 @@ export default function StudentProfilePage() {
                 <Sliders size={13} />
                 Continuous Personalisation Engine
               </div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
+              <h1 className="text-3xl font-semibold tracking-tight">
                 Student Preference Profile
               </h1>
               <p className="text-slate-300 text-sm mt-1">
@@ -321,7 +321,7 @@ export default function StudentProfilePage() {
                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200">
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-bold text-slate-700">Maximum Annual Tuition Budget</label>
-                    <span className="text-base font-extrabold text-accent">₹{formData.maxAnnualBudget} Lakhs / year</span>
+                    <span className="text-base font-semibold text-accent">₹{formData.maxAnnualBudget} Lakhs / year</span>
                   </div>
                   <input
                     type="range"

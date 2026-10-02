@@ -133,7 +133,7 @@ export default function HeroDiscovery({ onSeeAll }: { onSeeAll: (query: string) 
         <div aria-hidden className="absolute left-1/2 top-[-18%] h-[70%] w-[90%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(43,79,224,0.10),transparent)]" />
         <HeroField progress={prog} dim={phase !== 'idle'} />
 
-        <div className="relative h-full max-w-[1240px] mx-auto px-4 sm:px-8 flex flex-col pt-10 sm:pt-16 tall:pt-[max(2.5rem,7vh)] pb-16 tall:pb-0">
+        <div className={`relative h-full max-w-[1240px] mx-auto px-4 sm:px-8 flex flex-col pt-10 sm:pt-16 pb-16 tall:pb-0 transition-[padding] duration-500 ease-out ${phase === 'idle' ? 'tall:pt-[max(3rem,15vh)]' : 'tall:pt-[max(2.5rem,6vh)]'}`}>
           <motion.div style={scene ? { y: contentY } : undefined}>
           <motion.div style={scene ? { scale: headScale, opacity: headOpacity } : undefined} className="text-center origin-bottom">
             <motion.h1
@@ -255,7 +255,7 @@ export default function HeroDiscovery({ onSeeAll }: { onSeeAll: (query: string) 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.06, duration: 0.35 }}
                   onClick={() => typeAndRun(ex.query)}
-                  className="h-8 px-3 rounded-full text-[13px] text-ink-2 hover:text-ink hover:bg-surface border border-transparent hover:border-line transition-colors cursor-pointer"
+                  className="h-10 sm:h-8 px-3 rounded-full text-[13px] text-ink-2 hover:text-ink hover:bg-surface border border-transparent hover:border-line transition-colors cursor-pointer"
                 >
                   {ex.label}
                 </motion.button>
@@ -276,7 +276,7 @@ export default function HeroDiscovery({ onSeeAll }: { onSeeAll: (query: string) 
                   >
                     <div className="flex items-baseline justify-between px-1 mb-2">
                       <p className="text-sm text-ink">
-                        <span className="font-mono font-semibold nums">{results.length}</span>{' '}
+                        <span className="figure font-semibold nums">{results.length}</span>{' '}
                         {results.length === 1 ? 'college matches' : 'colleges match'} your criteria
                       </p>
                       {results.length > 0 && (
@@ -319,19 +319,19 @@ export default function HeroDiscovery({ onSeeAll }: { onSeeAll: (query: string) 
                             <dl className="hidden sm:flex items-center gap-6 nums text-right">
                               <div>
                                 <dt className="label !text-[9.5px]">Fee / yr</dt>
-                                <dd className="font-mono text-sm">₹{c.totalFees}L</dd>
+                                <dd className="figure font-medium text-sm">₹{c.totalFees}L</dd>
                               </div>
                               <div>
                                 <dt className="label !text-[9.5px]">Median</dt>
-                                <dd className="font-mono text-sm">₹{c.medianPackage}L</dd>
+                                <dd className="figure font-medium text-sm">₹{c.medianPackage}L</dd>
                               </div>
                               <div>
                                 <dt className="label !text-[9.5px]">Placed</dt>
-                                <dd className="font-mono text-sm">{c.placementPercent}%</dd>
+                                <dd className="figure font-medium text-sm">{c.placementPercent}%</dd>
                               </div>
                               <div>
                                 <dt className="label !text-[9.5px]">Score</dt>
-                                <dd className="font-mono text-sm font-semibold text-accent">{c.realityScore}</dd>
+                                <dd className="figure text-sm font-semibold text-accent">{c.realityScore}</dd>
                               </div>
                             </dl>
                             <SaveButton collegeId={c.id} collegeName={c.shortName} className="relative z-10" />
@@ -349,7 +349,7 @@ export default function HeroDiscovery({ onSeeAll }: { onSeeAll: (query: string) 
 
           {/* Ranking ribbon — the answer set drawing into the rankings below */}
           {tall && !reduce && (
-            <motion.div style={{ opacity: ribbon }} className="mt-auto pb-6 hidden tall:block" aria-hidden>
+            <motion.div style={{ opacity: ribbon }} className="absolute inset-x-4 sm:inset-x-8 bottom-0 pb-6 hidden tall:block bg-paper/80 backdrop-blur-[2px]" aria-hidden>
               <div className="flex items-end justify-between gap-6 border-t border-line pt-4">
                 <span className="label shrink-0">Reality Score</span>
                 {TOP_RANKED.map((c, i) => (

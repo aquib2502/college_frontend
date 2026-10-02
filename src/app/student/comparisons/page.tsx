@@ -40,7 +40,7 @@ export default function StudentComparisonsPage() {
                 <GitCompare size={13} />
                 Comparison Sets
               </div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
+              <h1 className="text-3xl font-semibold tracking-tight">
                 My College Comparisons
               </h1>
               <p className="text-slate-300 text-xs sm:text-sm mt-1">

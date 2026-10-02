@@ -39,12 +39,12 @@ export default function SentimentSection() {
   const ex = excerptFor(topic);
 
   return (
-    <section className="py-20 sm:py-28 border-t border-line" aria-labelledby="sentiment-title">
+    <section className="py-16 sm:py-24 border-t border-line" aria-labelledby="sentiment-title">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
         <Reveal className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div>
             <p className="label">Student sentiment</p>
-            <h2 id="sentiment-title" className="font-display mt-3 text-4xl sm:text-[3.5rem] font-semibold tracking-[-0.028em] leading-[0.98]">
+            <h2 id="sentiment-title" className="font-display mt-3 text-3xl sm:text-[2.75rem] font-semibold tracking-[-0.028em] leading-[0.98]">
               What students like.
               <br />
               <span className="text-muted">What they warn you about.</span>
@@ -98,7 +98,7 @@ export default function SentimentSection() {
                   transition={{ duration: 0.28, ease: EASE_OUT }}
                   className="mt-8 flex-1 flex flex-col"
                 >
-                  <blockquote className="font-display text-xl sm:text-[1.6rem] leading-[1.35] tracking-[-0.02em] text-faint">
+                  <blockquote className="text-xl sm:text-[1.6rem] leading-[1.35] tracking-[-0.015em] text-muted">
                     &ldquo;
                     {ex.sentences.map((s, i) => (
                       <span key={i} className={i === ex.hit ? 'text-ink' : undefined}>
@@ -123,7 +123,7 @@ export default function SentimentSection() {
                     </div>
                     <div className="pt-4 text-right">
                       <p className="label">{TOPICS.find(t => t.id === topic)!.label} rating</p>
-                      <p className="font-mono text-2xl font-semibold nums">
+                      <p className="figure text-2xl font-semibold nums">
                         {ex.rating.toFixed(1)}<span className="text-sm text-muted font-normal"> / 5</span>
                       </p>
                     </div>
@@ -158,8 +158,8 @@ export function ThemeList({
           <li key={t.name}>
             <div className="flex items-baseline justify-between gap-4">
               <span className="text-[15px] font-medium">{t.name}</span>
-              <span className="font-mono text-sm nums shrink-0">
-                {t.pct}% <span className="text-faint text-xs">{unit}</span>
+              <span className="figure font-medium text-sm nums shrink-0">
+                {t.pct}% <span className="text-muted text-xs">{unit}</span>
               </span>
             </div>
             <div className="mt-2 h-[6px] rounded-full bg-paper-2 overflow-hidden">
@@ -173,7 +173,7 @@ export function ThemeList({
               />
             </div>
             <p className="mt-1.5 text-xs text-muted">
-              {t.note} <span className="text-faint">· {t.mentions.toLocaleString('en-IN')} mentions</span>
+              {t.note} <span>· {t.mentions.toLocaleString('en-IN')} mentions</span>
             </p>
           </li>
         ))}

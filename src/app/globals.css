@@ -21,7 +21,7 @@
   --color-ink: #121417;
   --color-ink-2: #2e333a;
   --color-muted: #6a6f78;
-  --color-faint: #9a9ea6;
+  --color-faint: #757a83;
   --color-line: #e3e0d8;
   --color-line-2: #d4d0c6;
 
@@ -64,7 +64,7 @@
   --bg-card: #ffffff;
   --text-primary: #121417;
   --text-secondary: #4a4f57;
-  --text-muted: #9a9ea6;
+  --text-muted: #757a83;
   --border: #e3e0d8;
   --border-light: #eeece6;
   --success: #12805c;
@@ -100,6 +100,17 @@ body {
 .font-display {
   font-family: var(--font-display);
   font-optical-sizing: auto;
+}
+
+/* Data figures: Geist with tabular numerals. Bricolage is reserved for headlines. */
+@layer components {
+  .figure {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
 }
 
 /* Tabular figures anywhere numbers carry meaning */

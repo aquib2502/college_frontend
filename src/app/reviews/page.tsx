@@ -14,6 +14,7 @@ import { COLLEGES, Review } from '@/lib/mockData';
 
 import { INITIAL_REVIEWS } from '@/lib/reviewsData';
 import PageHeader from '@/components/layout/PageHeader';
+import Monogram from '@/components/college/Monogram';
 import SentimentResearch from '@/components/reviews/SentimentResearch';
 
 export default function ReviewsPage() {
@@ -142,7 +143,7 @@ export default function ReviewsPage() {
         <SentimentResearch />
 
         {/* Filter & Search Bar */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm mb-6">
+        <div className="bg-surface border border-line rounded-[20px] p-4 sm:p-5 mb-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* Search Input */}
             <div className="relative w-full lg:w-96">
@@ -170,7 +171,7 @@ export default function ReviewsPage() {
               <select
                 value={selectedCollege}
                 onChange={e => setSelectedCollege(e.target.value)}
-                className="px-3 py-2 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:border-accent"
+                className="h-10 px-3 text-sm bg-paper border border-line rounded-xl text-ink-2 focus:outline-none focus:border-accent"
               >
                 <option value="all">All Colleges ({COLLEGES.length})</option>
                 {COLLEGES.map(c => (
@@ -184,7 +185,7 @@ export default function ReviewsPage() {
               <select
                 value={selectedStudentType}
                 onChange={e => setSelectedStudentType(e.target.value)}
-                className="px-3 py-2 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:border-accent"
+                className="h-10 px-3 text-sm bg-paper border border-line rounded-xl text-ink-2 focus:outline-none focus:border-accent"
               >
                 <option value="all">All Reviewers</option>
                 <option value="Current Student">Current Students</option>
@@ -196,7 +197,7 @@ export default function ReviewsPage() {
               <select
                 value={selectedRating}
                 onChange={e => setSelectedRating(e.target.value)}
-                className="px-3 py-2 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:border-accent"
+                className="h-10 px-3 text-sm bg-paper border border-line rounded-xl text-ink-2 focus:outline-none focus:border-accent"
               >
                 <option value="all">All Ratings</option>
                 <option value="4.5">★ 4.5+ Stars</option>
@@ -220,7 +221,7 @@ export default function ReviewsPage() {
               {/* Sort By */}
               <select
                 value={sortBy}
-                onChange={e => setSortBy(e.target.value as any)}
+                onChange={e => setSortBy(e.target.value as typeof sortBy)}
                 className="px-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none"
               >
                 <option value="helpful">Sort: Most Helpful</option>
@@ -264,160 +265,94 @@ export default function ReviewsPage() {
                 key={r.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-surface border border-line rounded-[22px] p-6 sm:p-8"
               >
-                {/* Header: College Info & Rating */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-ink to-ink-2 text-white font-display font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                      {r.collegeName.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Link
-                          href={`/colleges/${r.collegeId}`}
-                          className="font-bold text-slate-900 text-sm hover:text-accent transition-colors"
-                        >
-                          {r.collegeName}
-                        </Link>
-                        {r.verified && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            <CheckCircle size={11} />
-                            Verified Student
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
-                        <span>{r.course}</span>
-                        <span>•</span>
-                        <span>Batch of {r.batch}</span>
-                        <span>•</span>
-                        <span>{r.studentType}</span>
-                      </div>
+                <header className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <Monogram name={r.collegeName} size="md" />
+                    <div className="min-w-0">
+                      <Link href={`/colleges/${r.collegeId}`} className="font-medium text-[15px] hover:text-accent transition-colors">
+                        {r.collegeName}
+                      </Link>
+                      <p className="text-sm text-muted mt-0.5">
+                        {r.studentType} · {r.course} · Batch {r.batch}
+                        {r.verified && <span className="ml-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-positive">Enrolment checked</span>}
+                      </p>
                     </div>
                   </div>
+                  <div className="sm:text-right shrink-0">
+                    <p className="figure text-3xl font-semibold tracking-[-0.02em] nums">
+                      {r.overallRating.toFixed(1)}<span className="text-base text-muted font-normal"> / 5</span>
+                    </p>
+                    <p className="text-xs text-muted nums">{new Date(r.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                  </div>
+                </header>
 
-                  {/* Rating Badge */}
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="text-right">
-                      <div className="flex items-center gap-1 justify-end">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star
-                            key={star}
-                            size={14}
-                            className={
-                              star <= Math.round(r.overallRating)
-                                ? 'text-amber-400 fill-amber-400'
-                                : 'text-slate-200'
-                            }
-                          />
-                        ))}
-                        <span className="font-bold text-sm text-slate-900 ml-1">
-                          {r.overallRating.toFixed(1)}
+                <dl className="mt-6 grid grid-cols-3 sm:grid-cols-6 gap-x-4 gap-y-3 nums">
+                  {([
+                    ['Faculty', r.facultyRating],
+                    ['Placement', r.placementRating],
+                    ['Infrastructure', r.infrastructureRating],
+                    ['Hostel', r.hostelRating],
+                    ['Campus', r.campusRating],
+                    ['ROI', r.roiRating],
+                  ] as const).map(([label, v]) => (
+                    <div key={label}>
+                      <dt className="label !text-[10px]">{label}</dt>
+                      <dd className="mt-1 flex items-center gap-2">
+                        <span className="figure font-medium text-sm">{v.toFixed(1)}</span>
+                        <span className="flex-1 h-1 rounded-full bg-paper-2 overflow-hidden">
+                          <span className={`block h-full rounded-full ${v >= 4.5 ? 'bg-positive' : v >= 4 ? 'bg-ink/70' : 'bg-caution'}`} style={{ width: `${(v / 5) * 100}%` }} />
                         </span>
-                      </div>
-                      <span className="text-[10px] text-slate-400">Published on {r.date}</span>
+                      </dd>
                     </div>
-                  </div>
-                </div>
+                  ))}
+                </dl>
 
-                {/* Sub-ratings Badges */}
-                <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 my-4 py-2.5 px-3 bg-slate-50/80 rounded-xl text-xs">
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Faculty</span>
-                    <strong className="text-slate-800 font-semibold">{r.facultyRating} / 5</strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Placement</span>
-                    <strong className="text-slate-800 font-semibold">{r.placementRating} / 5</strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Infrastructure</span>
-                    <strong className="text-slate-800 font-semibold">{r.infrastructureRating} / 5</strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Hostel</span>
-                    <strong className="text-slate-800 font-semibold">{r.hostelRating} / 5</strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Campus Life</span>
-                    <strong className="text-slate-800 font-semibold">{r.campusRating} / 5</strong>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">ROI</span>
-                    <strong className="text-slate-800 font-semibold">{r.roiRating} / 5</strong>
-                  </div>
-                </div>
+                <p className="mt-6 text-[15px] leading-relaxed text-ink-2">{r.experience}</p>
 
-                {/* Detailed Experience */}
-                <p className="text-sm text-slate-700 leading-relaxed mb-4">
-                  {r.experience}
-                </p>
-
-                {/* Pros and Cons Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                  <div className="p-3 bg-emerald-50/50 border border-emerald-100 rounded-xl">
-                    <p className="text-xs font-bold text-emerald-800 mb-1.5 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      Strengths & Highlights
-                    </p>
-                    <ul className="space-y-1">
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6 pt-5 border-t border-line">
+                  <div>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-positive">Liked</p>
+                    <ul className="mt-2 space-y-1.5">
                       {r.pros.map((p, idx) => (
-                        <li key={idx} className="text-xs text-slate-700 flex items-start gap-1.5">
-                          <span className="text-emerald-600 font-bold">+</span>
-                          <span>{p}</span>
-                        </li>
+                        <li key={idx} className="text-sm text-ink-2 pl-4 relative before:absolute before:left-0 before:top-[9px] before:h-1 before:w-2 before:bg-positive before:rounded-full">{p}</li>
                       ))}
                     </ul>
                   </div>
-
-                  <div className="p-3 bg-amber-50/40 border border-amber-100 rounded-xl">
-                    <p className="text-xs font-bold text-amber-800 mb-1.5 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                      Constructive Concerns
-                    </p>
-                    <ul className="space-y-1">
+                  <div>
+                    <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-caution">Warned about</p>
+                    <ul className="mt-2 space-y-1.5">
                       {r.cons.map((c, idx) => (
-                        <li key={idx} className="text-xs text-slate-700 flex items-start gap-1.5">
-                          <span className="text-amber-600 font-bold">−</span>
-                          <span>{c}</span>
-                        </li>
+                        <li key={idx} className="text-sm text-ink-2 pl-4 relative before:absolute before:left-0 before:top-[9px] before:h-1 before:w-2 before:bg-caution before:rounded-full">{c}</li>
                       ))}
                     </ul>
                   </div>
                 </div>
 
-                {/* Actions Footer */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
+                <footer className="mt-6 flex items-center justify-between gap-3 text-sm">
                   <button
                     onClick={() => handleHelpful(r.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
-                      votedReviews[r.id]
-                        ? 'bg-blue-50 border-blue-300 text-blue-700 font-semibold'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                    aria-pressed={!!votedReviews[r.id]}
+                    className={`h-10 px-3.5 rounded-lg border inline-flex items-center gap-2 transition-colors cursor-pointer ${
+                      votedReviews[r.id] ? 'bg-accent-soft border-accent/30 text-accent-deep' : 'border-line hover:border-ink-2'
                     }`}
                   >
-                    <ThumbsUp size={13} className={votedReviews[r.id] ? 'text-accent' : 'text-slate-400'} />
-                    <span>Helpful ({r.helpfulCount})</span>
+                    <ThumbsUp size={14} /> Helpful <span className="figure font-medium nums">{r.helpfulCount}</span>
                   </button>
-
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <button
                       onClick={() => handleReport(r.id)}
                       disabled={reportedReviews[r.id]}
-                      className="flex items-center gap-1 text-slate-400 hover:text-red-500 transition-colors text-[11px]"
+                      className="inline-flex items-center gap-1.5 text-muted hover:text-concern transition-colors cursor-pointer disabled:cursor-default"
                     >
-                      <Flag size={12} />
-                      <span>{reportedReviews[r.id] ? 'Reported for review' : 'Report'}</span>
+                      <Flag size={13} /> {reportedReviews[r.id] ? 'Reported' : 'Report'}
                     </button>
-                    <Link
-                      href={`/colleges/${r.collegeId}`}
-                      className="font-medium text-accent hover:underline"
-                    >
-                      View College Profile →
+                    <Link href={`/colleges/${r.collegeId}`} className="text-accent hover:underline">
+                      College profile →
                     </Link>
                   </div>
-                </div>
+                </footer>
               </motion.article>
             ))
           )}

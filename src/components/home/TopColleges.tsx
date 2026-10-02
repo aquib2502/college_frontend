@@ -30,12 +30,12 @@ export default function TopColleges() {
   const { compareList, addToCompare, removeFromCompare } = useApp();
 
   return (
-    <section className="py-20 sm:py-28" aria-labelledby="top-colleges">
+    <section className="py-16 sm:py-24" aria-labelledby="top-colleges">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-8">
         <Reveal className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div>
             <p className="label">Rankings · demo dataset</p>
-            <h2 id="top-colleges" className="font-display mt-3 text-4xl sm:text-[3.5rem] font-semibold tracking-[-0.028em] leading-[0.98]">
+            <h2 id="top-colleges" className="font-display mt-3 text-3xl sm:text-[2.75rem] font-semibold tracking-[-0.028em] leading-[0.98]">
               Top colleges, re-ranked
               <br className="hidden sm:block" /> by what you care about.
             </h2>
@@ -89,11 +89,11 @@ export default function TopColleges() {
                     aria-expanded={active}
                     className="w-full text-left grid grid-cols-[3.25rem_1fr_auto] sm:grid-cols-[5rem_1fr_9rem_7rem] items-center gap-3 sm:gap-6 py-5 px-1 sm:px-4 cursor-pointer"
                   >
-                    <span className={cn('font-display text-3xl sm:text-[2.75rem] font-semibold tracking-[-0.028em] leading-none nums transition-colors', active ? 'text-accent' : 'text-line-2')}>
+                    <span className={cn('figure text-3xl sm:text-[2.75rem] font-semibold tracking-[-0.028em] leading-none nums transition-colors', active ? 'text-accent' : 'text-line-2')}>
                       <AnimatedNumber value={i + 1} prefix={i + 1 < 10 ? '0' : ''} duration={0.35} />
                     </span>
                     <span className="min-w-0">
-                      <span className={cn('block font-display text-xl sm:text-2xl font-semibold tracking-[-0.025em] truncate transition-colors', active ? 'text-ink' : 'text-ink-2')}>
+                      <span className={cn('block text-xl sm:text-2xl font-semibold tracking-[-0.015em] truncate transition-colors', active ? 'text-ink' : 'text-ink-2')}>
                         {c.shortName}
                       </span>
                       <span className="block text-xs sm:text-sm text-muted mt-0.5 truncate">{c.location}</span>
@@ -109,7 +109,7 @@ export default function TopColleges() {
                         />
                       </span>
                     </span>
-                    <span className="text-right font-mono text-lg sm:text-xl font-semibold nums text-ink">
+                    <span className="text-right figure text-lg sm:text-xl font-semibold nums text-ink">
                       <AnimatedNumber
                         value={v}
                         decimals={mode.id === 'roi' ? 1 : mode.id === 'median' && v % 1 ? 1 : 0}
@@ -182,7 +182,7 @@ function Metric({ label, value, tone }: { label: string; value: string; tone?: '
       <p className="label">{label}</p>
       <p
         className={cn(
-          'mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-[-0.022em] nums',
+          'mt-1 figure text-3xl sm:text-4xl font-semibold tracking-[-0.022em] nums',
           tone === 'positive' && 'text-positive',
           tone === 'accent' && 'text-accent',
         )}

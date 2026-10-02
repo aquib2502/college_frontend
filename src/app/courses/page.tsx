@@ -219,34 +219,28 @@ export default function CoursesPage() {
     <div className="min-h-screen bg-paper text-slate-800">
       <Navbar />
 
-      {/* Hero Section — Deep Navy with radial electric blue glow */}
-      <section className="relative bg-ink text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto relative z-10">
+      {/* Header */}
+      <section className="border-b border-line pt-10 sm:pt-14 pb-10 px-4 sm:px-8">
+        <div className="max-w-[1240px] mx-auto">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-3">
-              <BookOpen size={12} className="text-blue-400" />
-              Academic Programs & Curriculum Directory
-            </div>
-            <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-[-0.03em] leading-tight">
-              Degrees, Fees & Career Pathways
+            <p className="label">Courses · programme directory</p>
+            <h1 className="font-display mt-3 text-[2.5rem] sm:text-6xl font-semibold tracking-[-0.028em] leading-[0.98] text-ink">
+              Degrees, fees and where they lead.
             </h1>
-            <p className="text-slate-300 text-sm sm:text-base mt-2 leading-relaxed">
-              Compare duration, estimated tuition, hostel costs, eligibility, and median campus packages across verified programs in India.
+            <p className="mt-4 text-muted text-base sm:text-lg leading-relaxed">
+              Compare duration, estimated tuition, hostel costs, eligibility, and median campus packages across programmes in the demo dataset.
             </p>
           </div>
 
           {/* Search bar */}
           <div className="mt-8 relative max-w-xl">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-300" />
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
             <input
               type="text"
               placeholder="Search programs by name, entrance exam (e.g. JEE, GATE), or job role..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-slate-400 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/15 transition-all shadow-lg shadow-blue-950/20"
+              className="w-full h-12 pl-11 pr-4 bg-surface border border-line-2/80 rounded-xl text-ink placeholder:text-faint text-sm outline-none focus:border-accent/60 focus:shadow-[0_0_0_4px_rgba(43,79,224,0.1)] transition-[border-color,box-shadow]"
             />
           </div>
         </div>
@@ -266,7 +260,7 @@ export default function CoursesPage() {
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setSelectedLevel(tab.id as any)}
+                onClick={() => setSelectedLevel(tab.id as typeof selectedLevel)}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   selectedLevel === tab.id
                     ? 'bg-ink text-white shadow-sm'
@@ -313,7 +307,7 @@ export default function CoursesPage() {
               <div>
                 {/* Badges */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-accent border border-blue-200">
+                  <span className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted">
                     {course.level} • {course.duration}
                   </span>
                   <span className="text-xs font-semibold text-slate-500">

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Info, CheckCircle2, Sparkles, ShieldCheck, Target, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
+import PageHeader from '@/components/layout/PageHeader';
 import Footer from '@/components/layout/Footer';
 import { getProbabilityLabel } from '@/lib/utils';
 
@@ -52,31 +53,18 @@ export default function AdmissionProbabilityPage() {
     <div className="min-h-screen bg-paper">
       <Navbar />
 
-      {/* Hero Banner — Deep Navy with radial electric blue glow */}
-      <div className="relative bg-ink text-white pt-12 pb-16 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(37,99,235,0.28),rgba(255,255,255,0))] pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <PageHeader
+        label="Admission probability"
+        title="What are your odds?"
+        description="An estimate from historical cutoffs, category and percentile. Demo model — use it to order choices, not to rule colleges out."
+      />
 
-        <div className="max-w-4xl mx-auto relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-300 text-xs font-semibold tracking-wider uppercase mb-4">
-            <TrendingUp size={12} className="text-blue-400" />
-            Predictive Admissions Analytics
-          </div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-white tracking-[-0.03em] leading-tight mb-3">
-            Admission Probability Predictor
-          </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Estimate your realistic admission probability across top institutions based on official historical cutoff data, category quotas, and percentile trends.
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 -mt-6 relative z-20">
+      <div className="max-w-[1240px] mx-auto px-4 sm:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Form */}
           <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 shadow-xl shadow-blue-950/5 space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h2 className="font-display font-bold text-slate-900 text-base">Candidate Profile</h2>
+              <h2 className="font-bold text-slate-900 text-base">Candidate Profile</h2>
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Step 1 of 2</span>
             </div>
 
@@ -104,7 +92,7 @@ export default function AdmissionProbabilityPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Score / Percentile</label>
-                <span className="font-display font-extrabold text-xs text-accent">{form.percentile} Percentile</span>
+                <span className="figure font-semibold text-xs text-accent">{form.percentile} Percentile</span>
               </div>
               <input
                 type="range"
@@ -158,7 +146,7 @@ export default function AdmissionProbabilityPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Class 12th Board Aggregate</label>
-                <span className="font-display font-extrabold text-xs text-accent">{form.marks}%</span>
+                <span className="figure font-semibold text-xs text-accent">{form.marks}%</span>
               </div>
               <input
                 type="range"
@@ -202,7 +190,7 @@ export default function AdmissionProbabilityPage() {
                   className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 shadow-xl shadow-blue-950/5 space-y-6"
                 >
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <h2 className="font-display font-bold text-slate-900 text-base">Prediction Output</h2>
+                    <h2 className="font-bold text-slate-900 text-base">Prediction Output</h2>
                     <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       Statistical Estimate
                     </span>
@@ -217,10 +205,10 @@ export default function AdmissionProbabilityPage() {
                       className="inline-flex flex-col items-center justify-center w-36 h-36 rounded-full border-4 mb-4 shadow-inner"
                       style={{ borderColor: probInfo.color, background: probInfo.bg }}
                     >
-                      <p className="font-display font-black text-4xl" style={{ color: probInfo.color }}>{result}%</p>
+                      <p className="figure font-semibold text-4xl" style={{ color: probInfo.color }}>{result}%</p>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Likelihood</span>
                     </motion.div>
-                    <p className="font-display font-bold text-xl text-slate-900">{probInfo.label}</p>
+                    <p className="font-bold text-xl text-slate-900">{probInfo.label}</p>
                     <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
                       for {form.course} at {form.percentile} percentile ({form.exam})
                     </p>
@@ -263,7 +251,7 @@ export default function AdmissionProbabilityPage() {
                   <div className="w-14 h-14 rounded-2xl bg-blue-50 text-accent flex items-center justify-center mx-auto mb-3">
                     <TrendingUp size={28} />
                   </div>
-                  <h3 className="font-display font-bold text-slate-900 text-sm mb-1">Ready to Calculate</h3>
+                  <h3 className="font-bold text-slate-900 text-sm mb-1">Ready to Calculate</h3>
                   <p className="text-xs text-slate-500 max-w-xs mx-auto">
                     Select your target exam and percentile on the left to generate predictive admission likelihoods.
                   </p>

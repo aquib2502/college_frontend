@@ -8,8 +8,6 @@ import { COLLEGES } from '@/lib/mockData';
 import Monogram from '@/components/college/Monogram';
 import { EASE_OUT } from '@/components/motion/Reveal';
 
-const STEPS = ['Discover', 'Compare', 'Verify', 'Decide'];
-
 export default function FinalCTA({ onStart }: { onStart: () => void }) {
   const reduce = useReducedMotion();
   const { savedColleges, setSavedOpen } = useApp();
@@ -30,36 +28,8 @@ export default function FinalCTA({ onStart }: { onStart: () => void }) {
           Choose with confidence.
         </motion.h2>
 
-        {/* Connected steps */}
-        <ol className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-y-6 max-w-3xl">
-          {STEPS.map((s, i) => (
-            <li key={s} className="relative pr-4">
-              <div className="flex items-center">
-                <motion.span
-                  initial={reduce ? false : { scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.15 + i * 0.15, type: 'spring', stiffness: 500, damping: 28 }}
-                  className={`h-3 w-3 rounded-full ${i === STEPS.length - 1 ? 'bg-accent ring-4 ring-accent/30' : 'bg-white'}`}
-                />
-                {i < STEPS.length - 1 && (
-                  <motion.span
-                    initial={reduce ? false : { scaleX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.25 + i * 0.15, duration: 0.35, ease: EASE_OUT }}
-                    className="ml-2 h-px flex-1 bg-white/30 origin-left"
-                  />
-                )}
-              </div>
-              <p className={`mt-3 font-display text-xl sm:text-2xl font-medium tracking-[-0.02em] ${i === STEPS.length - 1 ? 'text-white' : 'text-white/60'}`}>
-                {s}.
-              </p>
-            </li>
-          ))}
-        </ol>
 
-        <div className="mt-14 flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+        <div className="mt-12 flex flex-col lg:flex-row lg:items-end justify-between gap-10">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <button
